@@ -1,12 +1,13 @@
-import { prisma } from "@/prisma";
-import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
-import { nextCookies } from "better-auth/next-js";
-import { magicLink } from "better-auth/plugins";
+import { prisma } from '@/prisma';
+import { betterAuth } from 'better-auth';
+import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { nextCookies } from 'better-auth/next-js';
+import { magicLink } from 'better-auth/plugins';
+import { sendMagicLinkEmail } from './email/sendMagicLink';
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
-    provider: "postgresql",
+    provider: 'postgresql',
   }),
   socialProviders: {
     google: {
@@ -14,14 +15,10 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
-     plugins: [
-        magicLink({
-            sendMagicLink: async ({ email, token, url }, request) => {
-                // send email to user
-            }
-        })
-
-        // Make sure this one is last
-        nextCookies()
-    ]
+  plugins: [
+    magicLink({
+      sendMagicLink: sendMagicLinkEmail,
+    }),
+    nextCookies(), // Hey Kin, make sure this is always the last plugin, or else it won't work
+  ],
 });
