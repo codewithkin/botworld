@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
-import { Loader2 } from "lucide-react";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { authClient } from '@/lib/auth-client';
+import { Loader2 } from 'lucide-react';
 
 function LandingPage() {
   const router = useRouter();
@@ -12,9 +12,9 @@ function LandingPage() {
   useEffect(() => {
     if (isPending) return;
     if (data) {
-      router.push("/dashboard");
+      router.push('/dashboard');
     } else {
-      router.push("/auth");
+      router.push('/auth');
     }
   }, [data, isPending, router]);
 
