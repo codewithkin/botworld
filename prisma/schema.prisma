@@ -19,7 +19,7 @@ model User {
 
    bots      Bot[]
   documents Document[]
-  analytics Message[]
+  messages Message[]
   sessions      Session[]
   accounts      Account[]
 
