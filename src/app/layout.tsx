@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Poppins } from 'next/font/google';
 import './globals.css';
+import QueryClientProviderWrapper from '@/providers/QueryClientProviderWrapper';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -55,7 +56,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${poppins.variable}`}>
-      <body className={`${poppins.variable} antialiased`}>{children}</body>
+      <body className={`${poppins.variable} antialiased`}>
+        <QueryClientProviderWrapper>{children}</QueryClientProviderWrapper>
+      </body>
     </html>
   );
 }
