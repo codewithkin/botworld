@@ -52,7 +52,14 @@ function AuthPage() {
   return (
     <section className="min-h-screen w-full flex flex-col justify-center items-center px-4">
       <article className="flex flex-col gap-8 md:min-w-[400px] w-full md:w-fit">
-        <h2 className="text-2xl font-semibold capitalize text-center md:text-4xl">Welcome back</h2>
+        <article className="flex flex-col gap-2 items-center justify-center">
+          <h2 className="text-2xl font-semibold capitalize text-center md:text-4xl">
+            Welcome back
+          </h2>
+          <p className="text-muted foreground">
+            <p className="text-muted-foreground">Creating social media bots just got way easier.</p>
+          </p>
+        </article>
 
         <article className="flex flex-col gap-4">
           {/* Email input */}
