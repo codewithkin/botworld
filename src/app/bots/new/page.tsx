@@ -2,6 +2,7 @@
 import { ReactNode, useState } from 'react';
 import StepOne from './components/steps/one/StepOne';
 import StepTwo from './components/steps/one/StepTwo';
+import StepThree from './components/steps/one/StepThree';
 
 type Step = {
   title: string;
@@ -11,7 +12,7 @@ type Step = {
 
 function NewBot() {
   // Track the steps
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(3);
 
   const stepsHeaderData: Step[] = [
     {
@@ -27,7 +28,7 @@ function NewBot() {
     {
       title: "Configure your bot's behavior",
       step: 3,
-      // component: <StepThree />,
+      component: <StepThree step={currentStep} setStep={setCurrentStep} />,
     },
     {
       title: 'Confirm details',
