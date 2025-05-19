@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     // Create OpenAI Assistant with fixed model
     const assistant = await openai.beta.assistants.create({
       name: `${name} Assistant`,
-      instructions: purpose,
+      instructions: `You are ${purpose}`,
       model: 'gpt-3.5-turbo',
     });
 
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
         phoneNumber,
         whatsapp_number: whatsappNumber,
         telegram_username: telegramUsername,
-        assistantId: assistant.id, // Only store assistant ID
+        assistantId: assistant.id,
         user: { connect: { id: session.user.id } },
       },
     });
