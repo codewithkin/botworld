@@ -59,7 +59,7 @@ export default function RootLayout({
     <html lang="en" className={`${poppins.variable}`}>
       <body className={`${poppins.variable} antialiased`}>
         <QueryClientProviderWrapper>{children}</QueryClientProviderWrapper>
-        <Toaster richColors expand visibleToasts={5} />
+        <Toaster position="top-center" richColors expand visibleToasts={5} />
       </body>
     </html>
   );
