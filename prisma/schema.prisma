@@ -16,6 +16,10 @@ model User {
   image         String?
   createdAt     DateTime
   updatedAt     DateTime
+
+   bots      Bot[]
+  documents Document[]
+  analytics MessageAnalytics[]
   sessions      Session[]
   accounts      Account[]
 
@@ -66,4 +70,42 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+
+model Bot {
+  id          String     @id @default(uuid())
+  name        String
+  purpose     String     
+  phoneNumber String     
+  user        User       @relation(fields: [userId], references: [id])
+  userId      String
+  documents   Document[]
+  messages    MessageAnalytics[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Document {
+  id        String   @id @default(uuid())
+  name      String
+  url       String  
+  bot       Bot      @relation(fields: [botId], references: [id])
+  botId     String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+}
+
+model MessageAnalytics {
+  id             String   @id @default(uuid())
+  bot            Bot      @relation(fields: [botId], references: [id])
+  botId          String
+  user           User     @relation(fields: [userId], references: [id])
+  userId         String
+  sender         String  
+  responseTimeMs Int?
+  contentSnippet String
+  fallback       Boolean  
+  createdAt      DateTime @default(now())
 }
