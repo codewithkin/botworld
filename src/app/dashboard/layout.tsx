@@ -6,7 +6,7 @@ function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <SidebarProvider>
       <Sidebar />
-      <main className="p-4 md:p-8">
+      <main className="p-4 md:p-8 w-full">
         <SidebarTrigger />
         {children}
       </main>
