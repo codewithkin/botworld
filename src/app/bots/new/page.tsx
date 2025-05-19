@@ -16,7 +16,7 @@ function NewBot() {
     {
       title: 'Bot metadata',
       step: 1,
-      component: <StepOne />,
+      component: <StepOne step={currentStep} setStep={setCurrentStep} />,
     },
     {
       title: "Your bot's platforms",

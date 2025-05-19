@@ -3,21 +3,23 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { Textarea } from '@/components/ui/textarea';
-import { useMutation } from '@tanstack/react-query';
+import { AnyUseBaseQueryOptions, useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 
-function StepOne() {
+function StepOne({ setStep, step }: { setStep: any; step: number }) {
   // Track values
   const [name, setName] = useState('');
   const [purpose, setPurpose] = useState('');
 
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  // Create bot mutation
-  const { data, isPending: creatingBot } = useMutation({
-    mutationKey: ['create-bot'],
-    mutationFn: async () => {},
-  });
+  const completeStepOne = () => {
+    // Save the data to localStorage
+    localStorage.setItem('bot', JSON.stringify({ name, purpose, phoneNumber }));
+
+    // Update the step counter
+    setStep(step++);
+  };
 
   return (
     <section className="my-24 flex flex-col justify-center items-center">
@@ -26,6 +28,8 @@ function StepOne() {
           <Label htmlFor="name">Bot Name</Label>
           <Input
             className="py-6 px-4"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             required
             name="name"
             id="name"
@@ -37,6 +41,8 @@ function StepOne() {
           <Label htmlFor="purpose">Purpose</Label>
           <Textarea
             className="py-6 px-4"
+            value={purpose}
+            onChange={(e) => setPurpose(e.target.value)}
             required
             name="purpose"
             id="purpose"
@@ -47,6 +53,8 @@ function StepOne() {
         <article className="flex flex-col gap-2 w-full">
           <Label htmlFor="purpose">Fallback phone number</Label>
           <PhoneInput
+            value={phoneNumber}
+            onChange={setPhoneNumber}
             required
             name="purpose"
             id="purpose"
@@ -54,7 +62,7 @@ function StepOne() {
           />
         </article>
 
-        <Button className="py-6 px-4 w-full" type="button">
+        <Button onClick={() => completeStepOne()} className="py-6 px-4 w-full" type="button">
           Create bot
         </Button>
       </article>
