@@ -10,7 +10,7 @@ export async function sendMagicLinkEmail({
   url: string;
 }) {
   const transporter = nodemailer.createTransport({
-    service: 'gmail', // or use your preferred provider
+    service: 'gmail',
     auth: {
       user: process.env.GMAIL_USER,
       pass: process.env.GMAIL_PASS,
@@ -23,10 +23,10 @@ export async function sendMagicLinkEmail({
     subject: 'Your Magic Link is Here! ✨',
     html: `
       <div style="font-family: 'Poppins', sans-serif; padding: 24px; background: #fefefe; border-radius: 12px; border: 1px solid #eee;">
-        <h2 style="color: #8a2be2;">Hey there 👋</h2>
+        <h2 style="color: #222;">Hey there 👋</h2>
         <p style="font-size: 16px; color: #333;">Welcome to <strong>BotWorld</strong>! Here's your magic link to log in:</p>
         
-        <a href="${url}" style="display: inline-block; margin: 16px 0; background-color: #ff6a00; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600;">
+        <a href="${url}" style="display: inline-block; margin: 16px 0; background-color: oklch(54.6% 0.245 262.881); color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600;">
           Click here to sign in
         </a>
 
