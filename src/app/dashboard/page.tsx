@@ -5,6 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Clock10, Bot, FileText, MessageCircle } from 'lucide-react';
+import { MessagesOverTime } from './components/messages/MessagesOverTime';
 
 function DashboardPage() {
   // Fetch the user's data
@@ -21,7 +22,7 @@ function DashboardPage() {
     return (
       <section>
         <article className="grid sm:grid-cols-2 gap-4 md:gap-8 md:grid-cols-4 w-full">
-          {Array.from({ length: 4 }).map((_, i) => (
+          {['n', 'd', 'k', 'l'].map((_, i) => (
             <Card key={i}>
               <CardContent className="flex flex-col gap-4 p-6">
                 <Skeleton className="h-6 w-2/3" />
@@ -68,7 +69,7 @@ function DashboardPage() {
   ];
 
   return (
-    <section>
+    <section className="flex flex-col gap-8">
       <article className="grid sm:grid-cols-2 gap-4 md:gap-8 md:grid-cols-4 w-full">
         {metrics.map((metric) => (
           <Card key={metric.title}>
@@ -91,6 +92,9 @@ function DashboardPage() {
           </Card>
         ))}
       </article>
+
+      {/* Messages over time */}
+      <MessagesOverTime messages={data.messages} />
     </section>
   );
 }
