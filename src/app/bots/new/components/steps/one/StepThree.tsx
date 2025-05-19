@@ -46,6 +46,10 @@ function StepThree({ setStep, step }: { setStep: any; step: number }) {
     },
     onSuccess: () => {
       toast.success('Bot created successfully');
+
+      // Clear the bot data from localStorage
+      localStorage.removeItem('bot');
+
       setStep(step + 1);
     },
     onError: (error: any) => {
