@@ -1,12 +1,16 @@
 import Sidebar from '@/components/shared/Sidebar';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { ReactNode } from 'react';
 
 function DashboardLayout({ children }: { children: ReactNode }) {
   return (
-    <section>
+    <SidebarProvider>
       <Sidebar />
-      {children}
-    </section>
+      <main>
+        <SidebarTrigger />
+        {children}
+      </main>
+    </SidebarProvider>
   );
 }
 
