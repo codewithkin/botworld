@@ -50,7 +50,7 @@ function AuthPage() {
   const isLoading = signInWithEmail.isPending || signInWithGoogle.isPending;
 
   return (
-    <section className="min-h-screen w-full flex flex-col justify-center items-center px-4">
+    <section className="min-h-screen w-full flex flex-col justify-center items-center p-8">
       <article className="flex flex-col gap-8 md:min-w-[400px] w-full md:w-fit">
         <article className="flex flex-col gap-2 items-center justify-center">
           <h2 className="text-2xl font-semibold capitalize text-center md:text-4xl">
