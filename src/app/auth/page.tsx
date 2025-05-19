@@ -21,6 +21,8 @@ function AuthPage() {
         email,
         callbackURL: '/dashboard',
       });
+
+      return true;
     },
     onSuccess: () => {
       toast.success('Magic link sent! Check your email.');
@@ -37,6 +39,8 @@ function AuthPage() {
       const data = await authClient.signIn.social({
         provider: 'google',
       });
+
+      return true;
     },
     onError: () => {
       toast.error('Google sign-in failed. Try again.');
@@ -48,7 +52,7 @@ function AuthPage() {
   return (
     <section className="min-h-screen w-full flex flex-col justify-center items-center px-4">
       <article className="flex flex-col gap-8 md:min-w-[400px] w-full md:w-fit">
-        <h2 className="text-2xl font-semibold capitalize text-center">Welcome back</h2>
+        <h2 className="text-2xl font-semibold capitalize text-center md:text-4xl">Welcome back</h2>
 
         <article className="flex flex-col gap-4">
           {/* Email input */}
@@ -69,11 +73,12 @@ function AuthPage() {
           <Button
             onClick={() => signInWithEmail.mutate()}
             disabled={!email || isLoading || emailSent}
+            variant="default"
             className="w-full py-6 px-4"
           >
             {signInWithEmail.isPending ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className=" h-4 w-4 animate-spin" />
                 Sending magic link...
               </>
             ) : (
@@ -94,7 +99,7 @@ function AuthPage() {
         >
           {signInWithGoogle.isPending ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className=" h-4 w-4 animate-spin" />
               Signing in with Google...
             </>
           ) : (
