@@ -40,7 +40,7 @@ function AppSideBar() {
       name: 'Profile',
       slug: '/profile',
       icon: (
-        <Avatar className="h-6 w-6">
+        <Avatar className="h-6 w-6 bg-accent border text-primary border-primary font-semibold p-4">
           <AvatarImage src={data?.user?.image || ''} alt={`${data?.user?.email}'s avatar`} />
           <AvatarFallback>{data?.user?.email?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
         </Avatar>
