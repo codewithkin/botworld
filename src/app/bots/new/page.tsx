@@ -1,0 +1,67 @@
+'use client';
+import { ReactNode, useState } from 'react';
+import StepOne from './components/steps/one/StepOne';
+
+type Step = {
+  title: string;
+  step: number;
+  component?: ReactNode;
+};
+
+function NewBot() {
+  // Track the steps
+  const [currentStep, setCurrentStep] = useState(1);
+
+  const stepsHeaderData: Step[] = [
+    {
+      title: 'Bot metadata',
+      step: 1,
+      component: <StepOne />,
+    },
+    {
+      title: "Your bot's platforms",
+      step: 2,
+      // component: <StepTwo />,
+    },
+    {
+      title: "Configure your bot's behavior",
+      step: 3,
+      // component: <StepThree />,
+    },
+    {
+      title: 'Confirm details',
+      step: 4,
+      // component: <StepFour />,
+    },
+  ];
+
+  const CurrentStepComponent = stepsHeaderData[currentStep - 1].component;
+
+  return (
+    <section className="md:p-8 p-4">
+      {/** Header (Showing progress) */}
+      <article className="w-full h-full flex flex-col justify-center items-center">
+        <article className="flex md:flex-row flex-col gap-4 justify-around md:items-center w-full">
+          {stepsHeaderData.map((step: Step) => (
+            <span
+              key={step.step}
+              className={`${step.step === currentStep ? 'text-primary' : 'text-muted-foreground'} font-medium flex items-center gap-2`}
+            >
+              <span
+                className={` ${step.step === currentStep ? 'bg-primary' : 'bg-muted-foreground'} rounded-full p-2 text-white text-sm flex items-center justify-center h-6 w-6`}
+              >
+                {step.step}
+              </span>
+              {step.title}
+            </span>
+          ))}
+        </article>
+      </article>
+
+      {/* Show the current step's component */}
+      {CurrentStepComponent && <>{CurrentStepComponent}</>}
+    </section>
+  );
+}
+
+export default NewBot;
