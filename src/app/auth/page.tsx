@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 function AuthPage() {
   const [email, setEmail] = useState('');
@@ -36,7 +37,7 @@ function AuthPage() {
   const signInWithGoogle = useMutation({
     mutationKey: ['google-sign-in'],
     mutationFn: async () => {
-      const data = await authClient.signIn.social({
+      await authClient.signIn.social({
         provider: 'google',
       });
 
@@ -51,18 +52,20 @@ function AuthPage() {
 
   return (
     <section className="min-h-screen w-full flex flex-col justify-center items-center p-8">
-      <article className="flex flex-col gap-8 md:min-w-[400px] w-full md:w-fit">
+      <motion.article
+        initial={{ opacity: 0, y: 100 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+        className="flex flex-col gap-8 md:min-w-[400px] w-full md:w-fit"
+      >
         <article className="flex flex-col gap-2 items-center justify-center">
           <h2 className="text-2xl font-semibold capitalize text-center md:text-4xl">
             Welcome back
           </h2>
-          <p className="text-muted foreground">
-            <p className="text-muted-foreground">Creating social media bots just got way easier.</p>
-          </p>
+          <p className="text-muted-foreground">Creating social media bots just got way easier.</p>
         </article>
 
         <article className="flex flex-col gap-4">
-          {/* Email input */}
           <article className="flex flex-col gap-1">
             <Label htmlFor="email">Your Email</Label>
             <Input
@@ -76,7 +79,6 @@ function AuthPage() {
             />
           </article>
 
-          {/* Sign in with email button */}
           <Button
             onClick={() => signInWithEmail.mutate()}
             disabled={!email || isLoading || emailSent}
@@ -85,7 +87,7 @@ function AuthPage() {
           >
             {signInWithEmail.isPending ? (
               <>
-                <Loader2 className=" h-4 w-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
                 Sending magic link...
               </>
             ) : (
@@ -94,10 +96,8 @@ function AuthPage() {
           </Button>
         </article>
 
-        {/* OR divider */}
         <div className="text-center text-sm text-muted-foreground">or</div>
 
-        {/* Sign in with Google */}
         <Button
           onClick={() => signInWithGoogle.mutate()}
           disabled={isLoading || emailSent}
@@ -106,7 +106,7 @@ function AuthPage() {
         >
           {signInWithGoogle.isPending ? (
             <>
-              <Loader2 className=" h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" />
               Signing in with Google...
             </>
           ) : (
@@ -116,7 +116,7 @@ function AuthPage() {
             </>
           )}
         </Button>
-      </article>
+      </motion.article>
     </section>
   );
 }
