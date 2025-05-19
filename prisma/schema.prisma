@@ -77,12 +77,20 @@ model Bot {
   id          String     @id @default(uuid())
   name        String
   purpose     String
+
+   assistantId String?  @map("assistant_id")
+
+
   whatsapp_number      String?
   telegram_username   String?
   telegram_number     String?
-  phoneNumber String     
+  phoneNumber String 
+
+
   user        User       @relation(fields: [userId], references: [id])
   userId      String
+
+
   documents   Document[]
   messages    Message[]
   createdAt   DateTime   @default(now())
