@@ -1,6 +1,7 @@
 'use client';
 import { ReactNode, useState } from 'react';
 import StepOne from './components/steps/one/StepOne';
+import StepTwo from './components/steps/one/StepTwo';
 
 type Step = {
   title: string;
@@ -21,7 +22,7 @@ function NewBot() {
     {
       title: "Your bot's platforms",
       step: 2,
-      // component: <StepTwo />,
+      component: <StepTwo setStep={setCurrentStep} step={currentStep} />,
     },
     {
       title: "Configure your bot's behavior",
