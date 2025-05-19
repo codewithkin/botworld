@@ -15,7 +15,7 @@ function StepThree({ setStep, step }: { setStep: any; step: number }) {
     telegramUsername?: string;
   }>({});
 
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [whatsappNumber, setPhoneNumber] = useState('');
   const [telegramUsername, setTelegramUsername] = useState('');
 
   // Create bot mutation
@@ -26,7 +26,7 @@ function StepThree({ setStep, step }: { setStep: any; step: number }) {
       const updateData: Record<string, string> = {};
 
       if (botData.platform?.includes('whatsapp') || botData.platform === 'both') {
-        updateData.phoneNumber = phoneNumber;
+        updateData.whatsappNumber = whatsappNumber;
       }
 
       if (botData.platform?.includes('telegram') || botData.platform === 'both') {
@@ -65,7 +65,7 @@ function StepThree({ setStep, step }: { setStep: any; step: number }) {
   const showTelegramField = ['telegram', 'both'].includes(botData.platform || '');
 
   const isValid = () => {
-    const whatsappValid = !showWhatsAppField || phoneNumber.length > 5;
+    const whatsappValid = !showWhatsAppField || whatsappNumber.length > 5;
     const telegramValid = !showTelegramField || telegramUsername.length > 3;
     return whatsappValid && telegramValid;
   };
@@ -77,7 +77,7 @@ function StepThree({ setStep, step }: { setStep: any; step: number }) {
           <article className="flex flex-col gap-2 w-full">
             <Label htmlFor="whatsapp-phone">WhatsApp Phone Number</Label>
             <PhoneInput
-              value={phoneNumber}
+              value={whatsappNumber}
               onChange={setPhoneNumber}
               required
               id="whatsapp-phone"
