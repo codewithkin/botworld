@@ -1,8 +1,10 @@
 'use client';
+
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { Clock10 } from 'lucide-react';
+import { Clock10, Bot, FileText, MessageCircle } from 'lucide-react';
 
 function DashboardPage() {
   // Fetch the user's data
@@ -10,36 +12,84 @@ function DashboardPage() {
     queryKey: ['data'],
     queryFn: async () => {
       const res = await axios.get('/api/data');
-
       return res.data.data;
     },
   });
 
-  console.log('Data: ', data);
+  // Show loading skeletons while fetching
+  if (gettingUserData) {
+    return (
+      <section>
+        <article className="grid sm:grid-cols-2 gap-4 md:gap-8 md:grid-cols-4 w-full">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i}>
+              <CardContent className="flex flex-col gap-4 p-6">
+                <Skeleton className="h-6 w-2/3" />
+                <Skeleton className="h-8 w-1/2" />
+                <Skeleton className="h-4 w-full mt-4" />
+              </CardContent>
+            </Card>
+          ))}
+        </article>
+      </section>
+    );
+  }
+
+  // Construct card metrics from data
+  const metrics = [
+    {
+      title: 'Time Saved',
+      value: data.messages.length * 5,
+      unit: 'hrs',
+      description: `All the time you've saved by using Botworld instead of replying to every DM yourself.`,
+      icon: <Clock10 />,
+    },
+    {
+      title: 'Bots',
+      value: data.bots.length,
+      unit: '',
+      description: `Total bots you've created to handle customer interactions.`,
+      icon: <Bot />,
+    },
+    {
+      title: 'Documents',
+      value: data.documents.length,
+      unit: '',
+      description: `Knowledge base documents uploaded and used by your bots.`,
+      icon: <FileText />,
+    },
+    {
+      title: 'Messages',
+      value: data.messages.length,
+      unit: '',
+      description: `Total messages handled automatically by your bots.`,
+      icon: <MessageCircle />,
+    },
+  ];
 
   return (
     <section>
-      {/* Data cards */}
       <article className="grid sm:grid-cols-2 gap-4 md:gap-8 md:grid-cols-4 w-full">
-        {/* Time saved */}
-        <Card>
-          <CardContent>
-            <CardHeader className="flex text-md font-semibold gap-2 items-center">
-              <Clock10 />
-              <h4>Time Saved</h4>
-            </CardHeader>
+        {metrics.map((metric) => (
+          <Card key={metric.title}>
+            <CardContent>
+              <CardHeader className="flex text-md font-semibold gap-2 items-center">
+                {metric.icon}
+                <h4>{metric.title}</h4>
+              </CardHeader>
 
-            <article className="flex flex-col px-6 pt-6">
-              <h3 className="text-2xl font-semibold">{40} hrs</h3>
-            </article>
+              <article className="flex flex-col px-6 pt-6">
+                <h3 className="text-2xl font-semibold">
+                  {metric.value} {metric.unit}
+                </h3>
+              </article>
 
-            <CardFooter className="pt-2">
-              <CardDescription className="text-sm">
-                All the time you've saved by using Botworld instead of replying to every DM yourself
-              </CardDescription>
-            </CardFooter>
-          </CardContent>
-        </Card>
+              <CardFooter className="pt-2">
+                <CardDescription className="text-sm">{metric.description}</CardDescription>
+              </CardFooter>
+            </CardContent>
+          </Card>
+        ))}
       </article>
     </section>
   );
