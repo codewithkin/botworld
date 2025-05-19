@@ -19,7 +19,7 @@ model User {
 
    bots      Bot[]
   documents Document[]
-  analytics MessageAnalytics[]
+  analytics Message[]
   sessions      Session[]
   accounts      Account[]
 
@@ -81,7 +81,7 @@ model Bot {
   user        User       @relation(fields: [userId], references: [id])
   userId      String
   documents   Document[]
-  messages    MessageAnalytics[]
+  messages    Message[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 }
@@ -97,15 +97,15 @@ model Document {
   createdAt DateTime @default(now())
 }
 
-model MessageAnalytics {
+model Message {
   id             String   @id @default(uuid())
   bot            Bot      @relation(fields: [botId], references: [id])
   botId          String
   user           User     @relation(fields: [userId], references: [id])
   userId         String
   sender         String  
-  responseTimeMs Int?
   contentSnippet String
   fallback       Boolean  
+  reply           String?
   createdAt      DateTime @default(now())
 }
