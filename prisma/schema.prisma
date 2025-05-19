@@ -76,7 +76,10 @@ model Verification {
 model Bot {
   id          String     @id @default(uuid())
   name        String
-  purpose     String     
+  purpose     String
+  whatsapp_number      String?
+  telegram_username   String?
+  telegram_number     String?
   phoneNumber String     
   user        User       @relation(fields: [userId], references: [id])
   userId      String
