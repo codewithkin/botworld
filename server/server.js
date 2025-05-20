@@ -4,6 +4,7 @@ const {Server} = require("socket.io");
 const redis = require("./redis");
 const {createWhatsAppClient} = require("./whatsapp-manager");
 
+
 const app = express();
 const httpServer = createServer(app);
 
