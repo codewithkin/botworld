@@ -5,6 +5,7 @@ import { openai } from '@/lib/ai/openai';
 import { prisma } from '@/prisma';
 import OpenAI from 'openai';
 import { Prisma } from '../../../../prisma/generated/prisma';
+import redis from '@/lib/redis'; // Add Redis import
 
 export async function POST(request: Request) {
   try {
