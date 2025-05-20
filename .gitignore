@@ -9,6 +9,7 @@ pids
 *.pid.lock
 
 /server/.wwebjs_auth
+/server/.wwebjs_cache
 
 # Runtime data
 pids
