@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     const assistant = await openai.beta.assistants.create({
       name: `${name} Assistant`,
       instructions: `You are ${purpose}`,
-      model: 'o4-mini',
+      model: 'o3-mini',
     });
 
     // Create bot in database
