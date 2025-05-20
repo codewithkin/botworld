@@ -1,27 +1,35 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
+import { useEffect, useState, useRef } from 'react';
+import { io, Socket } from 'socket.io-client';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-const socket = io(process.env.NEXT_PUBLIC_WHATSAPP_SERVER_URL!, {
-  autoConnect: false,
-  withCredentials: true,
-  transports: ['websocket'],
-});
-
 export default function StepFour({ botId }: { botId: string }) {
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [status, setStatus] = useState('Connecting...');
   const router = useRouter();
-
-  console.log('Bot ID: ', botId);
+  const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    socket.auth = { botId };
-    socket.connect();
+    // Initialize socket with auth and options
+    socketRef.current = io(process.env.NEXT_PUBLIC_WHATSAPP_SERVER_URL!, {
+      auth: { botId },
+      withCredentials: true,
+      transports: ['websocket', 'polling'],
+      reconnectionAttempts: 3,
+      reconnectionDelay: 1000,
+      timeout: 20000,
+    });
+
+    const socket = socketRef.current;
+
+    // Connection events
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket server');
+      socket.emit('init');
+    });
 
     socket.on('qr', (qr: string) => {
       setQrCode(qr);
@@ -35,9 +43,25 @@ export default function StepFour({ botId }: { botId: string }) {
       }
     });
 
+    socket.on('connect_error', (err) => {
+      console.error('Connection Error:', err);
+      setStatus('Connection failed - Please refresh');
+    });
+
+    socket.on('disconnect', (reason) => {
+      console.log('Disconnected:', reason);
+      if (reason === 'io server disconnect') {
+        socket.connect();
+      }
+    });
+
+    // Cleanup on unmount
     return () => {
+      socket.off('connect');
       socket.off('qr');
       socket.off('status');
+      socket.off('connect_error');
+      socket.off('disconnect');
       socket.disconnect();
     };
   }, [botId, router]);
@@ -55,6 +79,7 @@ export default function StepFour({ botId }: { botId: string }) {
               height={400}
               alt="WhatsApp QR Code"
               className="mx-auto"
+              priority
             />
           </div>
         ) : (
@@ -65,7 +90,7 @@ export default function StepFour({ botId }: { botId: string }) {
 
         <p className="text-lg text-muted-foreground">{status}</p>
 
-        <Button variant="outline" onClick={() => socket.emit('reconnect')}>
+        <Button variant="outline" onClick={() => socketRef.current?.emit('reconnect')}>
           Reconnect
         </Button>
       </div>

@@ -8,6 +8,8 @@ pids
 *.seed
 *.pid.lock
 
+/server/.wwebjs_auth
+
 # Runtime data
 pids
 *.pid
