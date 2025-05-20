@@ -3,6 +3,7 @@ import { ReactNode, useState } from 'react';
 import StepOne from './components/steps/one/StepOne';
 import StepTwo from './components/steps/one/StepTwo';
 import StepThree from './components/steps/one/StepThree';
+import StepFour from './components/steps/one/StepFour';
 
 type Step = {
   title: string;
@@ -12,7 +13,10 @@ type Step = {
 
 function NewBot() {
   // Track the steps
-  const [currentStep, setCurrentStep] = useState(3);
+  const [currentStep, setCurrentStep] = useState(1);
+
+  // Track the botId (necessary for step 4)
+  const botId = localStorage.getItem('botId') || '';
 
   const stepsHeaderData: Step[] = [
     {
@@ -33,7 +37,7 @@ function NewBot() {
     {
       title: 'Confirm details',
       step: 4,
-      // component: <StepFour />,
+      component: <StepFour botId={botId} />,
     },
   ];
 

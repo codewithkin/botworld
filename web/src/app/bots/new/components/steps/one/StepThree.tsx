@@ -33,7 +33,7 @@ function StepThree({ setStep, step }: { setStep: any; step: number }) {
         updateData.telegramUsername = telegramUsername;
       }
 
-      // Save to localStorage
+      // Save to localStoragestep={currentStep}
       const fullData = {
         ...botData,
         ...updateData,
@@ -44,11 +44,16 @@ function StepThree({ setStep, step }: { setStep: any; step: number }) {
       const { data } = await axios.post('/api/bots', fullData);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (newBot) => {
       toast.success('Bot created successfully');
+
+      console.log('Data received from backend: ', newBot);
 
       // Clear the bot data from localStorage
       localStorage.removeItem('bot');
+
+      // Set the botId
+      localStorage.setItem('botId', newBot.id);
 
       setStep(step + 1);
     },
