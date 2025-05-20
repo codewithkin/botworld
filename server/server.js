@@ -8,7 +8,7 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.NEXT_PUBLIC_BASE_URL,
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });
