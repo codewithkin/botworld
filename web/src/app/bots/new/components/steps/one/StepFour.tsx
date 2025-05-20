@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 const socket = io(process.env.NEXT_PUBLIC_WHATSAPP_SERVER_URL!, {
   autoConnect: false,
   withCredentials: true,
+  transports: ['websocket'],
 });
 
 export default function StepFour({ botId }: { botId: string }) {
