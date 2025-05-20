@@ -1,4 +1,3 @@
-// app/components/create-bot/StepFour.tsx
 'use client';
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
@@ -16,6 +15,8 @@ export default function StepFour({ botId }: { botId: string }) {
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [status, setStatus] = useState('Connecting...');
   const router = useRouter();
+
+  console.log('Bot ID: ', botId);
 
   useEffect(() => {
     socket.auth = { botId };
