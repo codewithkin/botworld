@@ -15,8 +15,8 @@ pids
 *.pid.lock
 
 # Dependency directories
-/web/node_modules
-/web/.next
+**/node_modules
+**/.next
 jspm_packages
 
 # Optional npm cache directory
@@ -29,8 +29,8 @@ jspm_packages
 *.tgz
 
 # dotenv environment variables file
-.env
-.env.local
+**/.env
+**/.env.local
 .env.development.local
 .env.production.local
 .env.test.local
