@@ -1,6 +1,14 @@
+// whatsapp-manager.js
 const {Client, LocalAuth} = require("whatsapp-web.js");
 const qrcode = require("qrcode");
 const redis = require("./redis");
+const {OpenAI} = require("openai");
+
+require("dotenv").config();
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 module.exports.createWhatsAppClient = async (botId, socket) => {
   const client = new Client({
@@ -11,7 +19,7 @@ module.exports.createWhatsAppClient = async (botId, socket) => {
     },
   });
 
-  // Check existing session
+  // Load session if exists
   const savedSession = await redis.get(`whatsapp:${botId}:session`);
   if (savedSession) {
     client.authStrategy.restore({session: JSON.parse(savedSession)});
@@ -20,7 +28,6 @@ module.exports.createWhatsAppClient = async (botId, socket) => {
   client.on("qr", async (qr) => {
     const qrImage = await qrcode.toDataURL(qr);
     socket.emit("qr", qrImage);
-    socket.emit("status", "Scan QR code with your phone");
   });
 
   client.on("authenticated", (session) => {
@@ -28,14 +35,73 @@ module.exports.createWhatsAppClient = async (botId, socket) => {
   });
 
   client.on("ready", () => {
-    socket.emit("status", "connected");
-    redis.set(`whatsapp:${botId}:status`, "connected");
+    console.log(`WhatsApp client ready for bot: ${botId}`);
+    socket.emit("status", "Connected to WhatsApp");
   });
 
+  // MESSAGE HANDLING CORE
   client.on("message", async (msg) => {
-    // Handle messages using OpenAI assistant
-    const assistantId = await redis.get(`bot:${botId}:assistantId`);
-    // Add your message handling logic here
+    try {
+      // Ignore own messages and non-text
+      if (msg.fromMe || !msg.body) return;
+
+      // Get chat metadata
+      const chat = await msg.getChat();
+      const contact = await msg.getContact();
+
+      // Get assistant ID from Redis
+      const assistantId = await redis.get(`bot:${botId}:assistantId`);
+      if (!assistantId) {
+        console.error(`No assistant found for bot: ${botId}`);
+        return;
+      }
+
+      // Handle commands
+      if (msg.body.startsWith("!")) {
+        if (msg.body === "!ping") {
+          await msg.reply("🏓 pong");
+        }
+        return;
+      }
+
+      // Create OpenAI thread
+      const thread = await openai.beta.threads.create();
+
+      // Add user message to thread
+      await openai.beta.threads.messages.create(thread.id, {
+        role: "user",
+        content: msg.body,
+      });
+
+      // Create run with assistant
+      const run = await openai.beta.threads.runs.create(thread.id, {
+        assistant_id: assistantId,
+      });
+
+      // Poll for run completion
+      let runStatus = await openai.beta.threads.runs.retrieve(
+        thread.id,
+        run.id
+      );
+
+      while (runStatus.status !== "completed") {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+      }
+
+      // Get assistant response
+      const messages = await openai.beta.threads.messages.list(thread.id);
+      const assistantMessage = messages.data.find((m) => m.role === "assistant")
+        ?.content[0]?.text?.value;
+
+      // Send response
+      if (assistantMessage) {
+        await msg.reply(assistantMessage);
+      }
+    } catch (error) {
+      console.error(`Message handling error for bot ${botId}:`, error);
+      socket.emit("error", "Failed to process message");
+    }
   });
 
   await client.initialize();

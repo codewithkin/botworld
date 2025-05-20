@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     const assistant = await openai.beta.assistants.create({
       name: `${name} Assistant`,
       instructions: `You are ${purpose}`,
-      model: 'o3-mini',
+      model: 'gpt-3.5-turbo', // Changed to valid model name
     });
 
     // Create bot in database
@@ -47,6 +47,9 @@ export async function POST(request: Request) {
       },
     });
 
+    // Store assistant ID in Redis with expiration (1 week)
+    await redis.set(`bot:${newBot.id}:assistantId`, assistant.id, 'EX', 604800);
+
     return new NextResponse(JSON.stringify(newBot), {
       status: 201,
       headers: { 'Content-Type': 'application/json' },
@@ -54,7 +57,6 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('[BOTS_POST]', error);
 
-    // Error handling remains the same
     if (error instanceof OpenAI.APIError) {
       return new NextResponse(
         JSON.stringify({
