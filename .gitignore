@@ -15,7 +15,8 @@ pids
 *.pid.lock
 
 # Dependency directories
-**/node_modules
+/web/node_modules
+/web/.next
 jspm_packages
 
 # Optional npm cache directory
