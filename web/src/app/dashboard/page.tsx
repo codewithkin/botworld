@@ -7,6 +7,8 @@ import axios from 'axios';
 import { Clock10, Bot, FileText, MessageCircle } from 'lucide-react';
 import { MessagesOverTime } from './components/messages/MessagesOverTime';
 
+export const dynamic = 'force-dynamic';
+
 function DashboardPage() {
   // Fetch the user's data
   const { data, isLoading: gettingUserData } = useQuery({
@@ -98,7 +100,5 @@ function DashboardPage() {
     </section>
   );
 }
-
-export const dynamic = "force-dynamic";
 
 export default DashboardPage;

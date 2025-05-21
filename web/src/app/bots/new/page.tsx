@@ -5,6 +5,8 @@ import StepTwo from './components/steps/one/StepTwo';
 import StepThree from './components/steps/one/StepThree';
 import StepFour from './components/steps/one/StepFour';
 
+export const dynamic = 'force-dynamic';
+
 type Step = {
   title: string;
   step: number;
@@ -87,7 +89,5 @@ function NewBot() {
     </section>
   );
 }
-
-export const dynamic = "force-dynamic";
 
 export default NewBot;

@@ -11,6 +11,8 @@ import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
+export const dynamic = 'force-dynamic';
+
 function AuthPage() {
   const [email, setEmail] = useState('');
   const [emailSent, setEmailSent] = useState(false);
@@ -120,7 +122,5 @@ function AuthPage() {
     </section>
   );
 }
-
-export const dynamic = "force-dynamic";
 
 export default AuthPage;
