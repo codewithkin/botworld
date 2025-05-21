@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Poppins } from 'next/font/google';
 import './globals.css';
 import QueryClientProviderWrapper from '@/providers/QueryClientProviderWrapper';
 import { Toaster } from 'sonner';
+import { Analytics } from '@vercel/analytics/next';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -60,6 +61,7 @@ export default function RootLayout({
       <body className={`${poppins.variable} antialiased`}>
         <QueryClientProviderWrapper>{children}</QueryClientProviderWrapper>
         <Toaster position="top-center" richColors expand visibleToasts={5} />
+        <Analytics />
       </body>
     </html>
   );
