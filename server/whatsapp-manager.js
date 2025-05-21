@@ -48,7 +48,7 @@ module.exports.createWhatsAppClient = async (botId, socket) => {
   client.on("message", async (msg) => {
     try {
       // Ignore own messages and non-text
-      if (msg.fromMe || !msg.body) return;
+      if (!msg.body) return;
 
       // Get chat metadata
       const chat = await msg.getChat();
@@ -75,7 +75,7 @@ module.exports.createWhatsAppClient = async (botId, socket) => {
       // Add user message to thread
       await openai.beta.threads.messages.create(thread.id, {
         role: "user",
-        content: msg.body,
+        content: `User data: ${contact}, chat: ${chat}, message: ${msg.body}`,
       });
 
       // Create run with assistant
