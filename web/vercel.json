@@ -1,0 +1,11 @@
+{
+  "functions": {
+    "api/auth/**": {
+      "runtime": "nodejs@18",
+      "memory": 3008 
+    },
+    "app/auth/**": {
+      "runtime": "nodejs@18"
+    }
+  }
+}
