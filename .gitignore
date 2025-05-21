@@ -10,6 +10,7 @@ pids
 
 /server/.wwebjs_auth
 /server/.wwebjs_cache
+/server/sessions
 
 # Runtime data
 pids

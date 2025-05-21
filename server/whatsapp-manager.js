@@ -11,7 +11,14 @@ const openai = new OpenAI({
 });
 
 module.exports.createWhatsAppClient = async (botId, socket) => {
-  const client = new Client();
+  const client = new Client({
+    puppeteer: {
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    },
+    authStrategy: new LocalAuth({
+      dataPath: "sessions",
+    }),
+  });
 
   // Load session if exists
   const savedSession = await redis.get(`whatsapp:${botId}:session`);
