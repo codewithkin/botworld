@@ -1,5 +1,5 @@
 'use client';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import StepOne from './components/steps/one/StepOne';
 import StepTwo from './components/steps/one/StepTwo';
 import StepThree from './components/steps/one/StepThree';
@@ -12,11 +12,18 @@ type Step = {
 };
 
 function NewBot() {
-  // Track the steps
   const [currentStep, setCurrentStep] = useState(1);
+  const [isClient, setIsClient] = useState(false);
+  const [botId, setBotId] = useState('');
 
-  // Track the botId (necessary for step 4)
-  const botId = localStorage.getItem('botId') || '';
+  // Load botId safely after mount
+  useEffect(() => {
+    setIsClient(true);
+    const savedBotId = typeof window !== 'undefined' 
+      ? localStorage.getItem('botId') 
+      : null;
+    setBotId(savedBotId || '');
+  }, []);
 
   const stepsHeaderData: Step[] = [
     {
@@ -37,9 +44,18 @@ function NewBot() {
     {
       title: 'Confirm details',
       step: 4,
-      component: <StepFour botId={botId} />,
+      component: isClient ? <StepFour botId={botId} /> : null,
     },
   ];
+
+  // Only render after confirming client-side
+  if (!isClient) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <p className="text-muted-foreground">Initializing bot creation...</p>
+      </div>
+    );
+  }
 
   const CurrentStepComponent = stepsHeaderData[currentStep - 1].component;
 
@@ -51,10 +67,14 @@ function NewBot() {
           {stepsHeaderData.map((step: Step) => (
             <span
               key={step.step}
-              className={`${step.step === currentStep ? 'text-primary' : 'text-muted-foreground'} font-medium flex items-center gap-2`}
+              className={`${
+                step.step === currentStep ? 'text-primary' : 'text-muted-foreground'
+              } font-medium flex items-center gap-2`}
             >
               <span
-                className={` ${step.step === currentStep ? 'bg-primary' : 'bg-muted-foreground'} rounded-full p-2 text-white text-sm flex items-center justify-center h-6 w-6`}
+                className={` ${
+                  step.step === currentStep ? 'bg-primary' : 'bg-muted-foreground'
+                } rounded-full p-2 text-white text-sm flex items-center justify-center h-6 w-6`}
               >
                 {step.step}
               </span>
@@ -64,8 +84,12 @@ function NewBot() {
         </article>
       </article>
 
-      {/* Show the current step's component */}
-      {CurrentStepComponent && <>{CurrentStepComponent}</>}
+      {/* Conditional rendering of step components */}
+      {CurrentStepComponent && (
+        <div className="mt-8 animate-fade-in">
+          {CurrentStepComponent}
+        </div>
+      )}
     </section>
   );
 }
