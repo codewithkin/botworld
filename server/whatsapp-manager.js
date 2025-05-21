@@ -37,6 +37,8 @@ module.exports.createWhatsAppClient = async (botId, socket) => {
 
   client.on("authenticated", (session) => {
     redis.set(`whatsapp:${botId}:session`, JSON.stringify(session));
+
+    socket.emit("status", "connected");
   });
 
   client.on("ready", () => {
