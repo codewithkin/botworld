@@ -10,15 +10,17 @@ export async function sendMagicLinkEmail({
   url: string;
 }) {
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'mail.spacemail.com',
+    port: 465,
+    secure: true,
     auth: {
-      user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_PASS,
+      user: 'no-reply@botworld.pro',
+      pass: process.env.EMAIL_PASS,
     },
   });
 
   const mailOptions = {
-    from: `"BotWorld 🪄" <${process.env.GMAIL_USER}>`,
+    from: `"BotWorld 🪄" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: 'Your Magic Link is Here! ✨',
     html: `

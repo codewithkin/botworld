@@ -19,9 +19,7 @@ function NewBot() {
   // Load botId safely after mount
   useEffect(() => {
     setIsClient(true);
-    const savedBotId = typeof window !== 'undefined' 
-      ? localStorage.getItem('botId') 
-      : null;
+    const savedBotId = typeof window !== 'undefined' ? localStorage.getItem('botId') : null;
     setBotId(savedBotId || '');
   }, []);
 
@@ -85,11 +83,7 @@ function NewBot() {
       </article>
 
       {/* Conditional rendering of step components */}
-      {CurrentStepComponent && (
-        <div className="mt-8 animate-fade-in">
-          {CurrentStepComponent}
-        </div>
-      )}
+      {CurrentStepComponent && <div className="mt-8 animate-fade-in">{CurrentStepComponent}</div>}
     </section>
   );
 }
