@@ -11,19 +11,24 @@ const openai = new OpenAI({
 });
 
 module.exports.createWhatsAppClient = async (botId, socket) => {
-  const client = new Client({
-    authStrategy: new LocalAuth({clientId: botId}),
-    puppeteer: {
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    },
-  });
+  const client = new Client();
 
   // Load session if exists
   const savedSession = await redis.get(`whatsapp:${botId}:session`);
   if (savedSession) {
     client.authStrategy.restore({session: JSON.parse(savedSession)});
   }
+
+  client.on("auth_failure", (msg) => {
+    console.error(`Auth failure for bot ${botId}:`, msg);
+    socket.emit("error", "WhatsApp authentication failed");
+  });
+
+  client.on("disconnected", (reason) => {
+    console.log(`Client disconnected for bot ${botId}:`, reason);
+    socket.emit("status", "Disconnected - Reconnecting...");
+    client.initialize();
+  })
 
   client.on("qr", async (qr) => {
     const qrImage = await qrcode.toDataURL(qr);
