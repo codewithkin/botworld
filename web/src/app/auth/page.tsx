@@ -121,4 +121,6 @@ function AuthPage() {
   );
 }
 
+export const dynamic = "force-dynamic";
+
 export default AuthPage;
