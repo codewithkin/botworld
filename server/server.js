@@ -1,9 +1,9 @@
+// server.js
 const express = require("express");
 const {createServer} = require("http");
 const {Server} = require("socket.io");
 const redis = require("./redis");
 const {createWhatsAppClient} = require("./whatsapp-manager");
-
 
 const app = express();
 const httpServer = createServer(app);
@@ -21,18 +21,25 @@ const io = new Server(httpServer, {
   transports: ["websocket", "polling"],
 });
 
-// Redis connection
-redis.on("connect", () => console.log("Connected to Redis"));
+// Initialize existing bots when Redis connects
+redis.on("connect", async () => {
+  console.log("Connected to Redis");
+  try {
+    const {initializeExistingBots} = require("./whatsapp-manager");
+    await initializeExistingBots();
+  } catch (error) {
+    console.error("Error initializing bots:", error);
+  }
+});
+
 redis.on("error", (err) => console.error("Redis error:", err));
 
 io.on("connection", (socket) => {
   const botId = socket.handshake.auth.botId;
   console.log(`New connection for bot: ${botId}`);
 
-  // Immediately set up init handler
   socket.on("init", async () => {
     try {
-      console.log(`Initializing WhatsApp client for bot: ${botId}`);
       const client = await createWhatsAppClient(botId, socket);
       socket.emit("status", "Initializing WhatsApp connection...");
     } catch (error) {
@@ -41,15 +48,8 @@ io.on("connection", (socket) => {
     }
   });
 
-  // Handle disconnection
   socket.on("disconnect", (reason) => {
     console.log(`Disconnected (${reason}) from bot: ${botId}`);
-    redis.del(`whatsapp:${botId}:session`);
-  });
-
-  // Add error handling
-  socket.on("error", (error) => {
-    console.error(`Socket error for bot ${botId}:`, error);
   });
 });
 
