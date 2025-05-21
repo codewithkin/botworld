@@ -28,7 +28,7 @@ module.exports.createWhatsAppClient = async (botId, socket) => {
     console.log(`Client disconnected for bot ${botId}:`, reason);
     socket.emit("status", "Disconnected - Reconnecting...");
     client.initialize();
-  })
+  });
 
   client.on("qr", async (qr) => {
     const qrImage = await qrcode.toDataURL(qr);
@@ -49,6 +49,8 @@ module.exports.createWhatsAppClient = async (botId, socket) => {
     try {
       // Ignore own messages and non-text
       if (!msg.body) return;
+
+      console.log("We just received a message: ", msg.body);
 
       // Get chat metadata
       const chat = await msg.getChat();
