@@ -66,16 +66,18 @@ function ClientComponent() {
           {stepsHeaderData.map((step: Step) => (
             <span
               key={step.step}
-              className={`${step.step === currentStep
+              className={`${
+                step.step === currentStep
                   ? "text-primary"
                   : "text-muted-foreground"
-                } font-medium flex items-center gap-2`}
+              } font-medium flex items-center gap-2`}
             >
               <span
-                className={` ${step.step === currentStep
+                className={` ${
+                  step.step === currentStep
                     ? "bg-primary"
                     : "bg-muted-foreground"
-                  } rounded-full p-2 text-white text-sm flex items-center justify-center h-6 w-6`}
+                } rounded-full p-2 text-white text-sm flex items-center justify-center h-6 w-6`}
               >
                 {step.step}
               </span>
