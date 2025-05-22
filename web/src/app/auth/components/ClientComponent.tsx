@@ -18,15 +18,17 @@ function ClientComponent() {
   const signInWithEmail = useMutation({
     mutationKey: ['email-sign-in'],
     mutationFn: async () => {
-      await authClient.signIn.magicLink({
+      const { error } = await authClient.signIn.magicLink({
         email,
         callbackURL: '/dashboard',
       });
 
-      return true;
-    },
-    onSuccess: () => {
-      toast.success('Magic link sent! Check your email.');
+      if (error) {
+        return toast.error('An error occured while signing you in...please try again later');
+      }
+
+      toast.success('Success ! Please check your email for a sign in link');
+
       setEmailSent(true);
     },
     onError: () => {
@@ -37,11 +39,10 @@ function ClientComponent() {
   const signInWithGoogle = useMutation({
     mutationKey: ['google-sign-in'],
     mutationFn: async () => {
-      await authClient.signIn.social({
+      authClient.signIn.social({
         provider: 'google',
+        callbackURL: '/dashboard',
       });
-
-      return true;
     },
     onError: () => {
       toast.error('Google sign-in failed. Try again.');
