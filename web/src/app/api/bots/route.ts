@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
-import { auth } from '@/lib/auth';
+import { auth, prisma } from '@/lib/auth';
 import { openai } from '@/lib/ai/openai';
-import { prisma } from '@/prisma';
 import OpenAI from 'openai';
-import { Prisma } from '../../../../prisma/generated/prisma';
 import redis from '@/lib/redis'; // Add Redis import
+import { Prisma } from '@/generated/prisma';
 
 export async function POST(request: Request) {
   try {

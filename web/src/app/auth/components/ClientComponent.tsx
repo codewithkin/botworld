@@ -66,4 +66,3 @@ function ClientComponent() {
 }
 
 export default ClientComponent;
-
