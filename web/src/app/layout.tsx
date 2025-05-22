@@ -4,6 +4,7 @@ import './globals.css';
 import QueryClientProviderWrapper from '@/providers/QueryClientProviderWrapper';
 import { Toaster } from 'sonner';
 import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -62,6 +63,7 @@ export default function RootLayout({
         <QueryClientProviderWrapper>{children}</QueryClientProviderWrapper>
         <Toaster position="top-center" richColors expand visibleToasts={5} />
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
