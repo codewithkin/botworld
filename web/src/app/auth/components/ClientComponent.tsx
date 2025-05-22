@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
 import { authClient } from '@/lib/auth-client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,42 +13,38 @@ import { motion } from 'framer-motion';
 function ClientComponent() {
   const [email, setEmail] = useState('');
   const [emailSent, setEmailSent] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [signInMethod, setSignInMethod] = useState<'email' | 'google'>('email');
 
-  const signInWithEmail = useMutation({
-    mutationKey: ['signInWithEmail'],
-    mutationFn: async () => {
-      const { error } = await authClient.signIn.magicLink({
-        email,
-        callbackURL: '/dashboard',
-      });
+  const handleSignIn = async () => {
+    setIsLoading(true);
 
-      if (error) {
-        return toast.error('An error occured while signing you in...please try again later');
+    try {
+      if (signInMethod === 'email') {
+        const { error } = await authClient.signIn.magicLink({
+          email,
+          callbackURL: '/dashboard',
+        });
+
+        if (error) {
+          setIsLoading(false);
+          return toast.error('An error occured while signing you in...please try again later');
+        }
+
+        toast.success('Success ! Please check your email for a sign in link');
+
+        setEmailSent(true);
+      } else {
+        await authClient.signIn.social({
+          provider: 'google',
+          callbackURL: '/dashboard',
+        });
       }
-
-      toast.success('Success ! Please check your email for a sign in link');
-
-      setEmailSent(true);
-    },
-    onError: () => {
-      toast.error('Failed to send email. Please try again.');
-    },
-  });
-
-  const signInWithGoogle = useMutation({
-    mutationKey: ['google-sign-in'],
-    mutationFn: async () => {
-      await authClient.signIn.social({
-        provider: 'google',
-        callbackURL: '/dashboard',
-      });
-    },
-    onError: () => {
-      toast.error('Google sign-in failed. Try again.');
-    },
-  });
-
-  const isLoading = signInWithEmail.isPending || signInWithGoogle.isPending;
+    } catch (error) {
+      setIsLoading(false);
+      toast.error('Failed to sign in. Please try again.');
+    }
+  };
 
   return (
     <section className="min-h-screen w-full flex flex-col justify-center items-center p-8">
@@ -81,12 +76,15 @@ function ClientComponent() {
           </article>
 
           <Button
-            onClick={() => signInWithEmail.mutate()}
+            onClick={() => {
+              setSignInMethod('email');
+              handleSignIn();
+            }}
             disabled={!email || isLoading || emailSent}
             variant="default"
             className="w-full py-6 px-4"
           >
-            {signInWithEmail.isPending ? (
+            {isLoading ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Sending magic link...
@@ -100,12 +98,15 @@ function ClientComponent() {
         <div className="text-center text-sm text-muted-foreground">or</div>
 
         <Button
-          onClick={() => signInWithGoogle.mutate()}
+          onClick={() => {
+            setSignInMethod('google');
+            handleSignIn();
+          }}
           disabled={isLoading || emailSent}
           variant="outline"
           className="w-full py-6 px-4"
         >
-          {signInWithGoogle.isPending ? (
+          {isLoading ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
               Signing in with Google...
@@ -123,3 +124,4 @@ function ClientComponent() {
 }
 
 export default ClientComponent;
+
