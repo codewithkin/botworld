@@ -11,35 +11,16 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 function ClientComponent() {
-  const [email, setEmail] = useState('');
-  const [emailSent, setEmailSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [signInMethod, setSignInMethod] = useState<'email' | 'google'>('email');
 
   const handleSignIn = async () => {
     setIsLoading(true);
 
     try {
-      if (signInMethod === 'email') {
-        const { error } = await authClient.signIn.magicLink({
-          email,
-          callbackURL: '/dashboard',
-        });
-
-        if (error) {
-          setIsLoading(false);
-          return toast.error('An error occured while signing you in...please try again later');
-        }
-
-        toast.success('Success ! Please check your email for a sign in link');
-
-        setEmailSent(true);
-      } else {
-        await authClient.signIn.social({
-          provider: 'google',
-          callbackURL: '/dashboard',
-        });
-      }
+      await authClient.signIn.social({
+        provider: 'google',
+        callbackURL: '/dashboard',
+      });
     } catch (error) {
       setIsLoading(false);
       toast.error('Failed to sign in. Please try again.');
@@ -61,48 +42,9 @@ function ClientComponent() {
           <p className="text-muted-foreground">Creating social media bots just got way easier.</p>
         </article>
 
-        <article className="flex flex-col gap-4">
-          <article className="flex flex-col gap-1">
-            <Label htmlFor="email">Your Email</Label>
-            <Input
-              className="py-6 px-4"
-              id="email"
-              type="email"
-              placeholder="kin@botworld.pro"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={emailSent || isLoading}
-            />
-          </article>
-
-          <Button
-            onClick={() => {
-              setSignInMethod('email');
-              handleSignIn();
-            }}
-            disabled={!email || isLoading || emailSent}
-            variant="default"
-            className="w-full py-6 px-4"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Sending magic link...
-              </>
-            ) : (
-              'Sign in with email'
-            )}
-          </Button>
-        </article>
-
-        <div className="text-center text-sm text-muted-foreground">or</div>
-
         <Button
-          onClick={() => {
-            setSignInMethod('google');
-            handleSignIn();
-          }}
-          disabled={isLoading || emailSent}
+          onClick={handleSignIn}
+          disabled={isLoading}
           variant="outline"
           className="w-full py-6 px-4"
         >
