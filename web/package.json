@@ -6,8 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "format": "npx prettier --write .",
-    "postinstall": "prisma generate"
+    "format": "npx prettier --write ."
   },
   "dependencies": {
     "@prisma/client": "^6.8.2",
