@@ -39,7 +39,7 @@ function ClientComponent() {
   const signInWithGoogle = useMutation({
     mutationKey: ['google-sign-in'],
     mutationFn: async () => {
-      authClient.signIn.social({
+      await authClient.signIn.social({
         provider: 'google',
         callbackURL: '/dashboard',
       });
