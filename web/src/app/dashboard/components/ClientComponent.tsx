@@ -11,7 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Clock10, Bot, FileText, MessageCircle } from "lucide-react";
-import { MessagesOverTime } from "../components/messages/MessagesOverTime";
+import { MessagesOverTime } from "./messages/MessagesOverTime";
 
 function ClientComponent() {
   // Fetch the user's data

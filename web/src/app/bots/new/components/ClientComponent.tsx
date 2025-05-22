@@ -1,9 +1,9 @@
 "use client";
 import { useState, useEffect, ReactNode } from "react";
-import StepOne from "../components/steps/one/StepOne";
-import StepTwo from "../components/steps/one/StepTwo";
-import StepThree from "../components/steps/one/StepThree";
-import StepFour from "../components/steps/one/StepFour";
+import StepOne from "./steps/one/StepOne";
+import StepTwo from "./steps/one/StepTwo";
+import StepThree from "./steps/one/StepThree";
+import StepFour from "./steps/one/StepFour";
 
 type Step = {
   title: string;
@@ -66,18 +66,16 @@ function ClientComponent() {
           {stepsHeaderData.map((step: Step) => (
             <span
               key={step.step}
-              className={`${
-                step.step === currentStep
+              className={`${step.step === currentStep
                   ? "text-primary"
                   : "text-muted-foreground"
-              } font-medium flex items-center gap-2`}
+                } font-medium flex items-center gap-2`}
             >
               <span
-                className={` ${
-                  step.step === currentStep
+                className={` ${step.step === currentStep
                     ? "bg-primary"
                     : "bg-muted-foreground"
-                } rounded-full p-2 text-white text-sm flex items-center justify-center h-6 w-6`}
+                  } rounded-full p-2 text-white text-sm flex items-center justify-center h-6 w-6`}
               >
                 {step.step}
               </span>
