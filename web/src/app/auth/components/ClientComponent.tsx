@@ -16,7 +16,7 @@ function ClientComponent() {
   const [emailSent, setEmailSent] = useState(false);
 
   const signInWithEmail = useMutation({
-    mutationKey: ['email-sign-in'],
+    mutationKey: ['signInWithEmail'],
     mutationFn: async () => {
       const { error } = await authClient.signIn.magicLink({
         email,
