@@ -27,6 +27,12 @@ function ClientComponent() {
     }
   };
 
+  const signIn = async () => {
+    const data = await authClient.signIn.social({
+      provider: "google"
+    })
+  }
+
   return (
     <section className="min-h-screen w-full flex flex-col justify-center items-center p-8">
       <motion.article
@@ -43,7 +49,7 @@ function ClientComponent() {
         </article>
 
         <Button
-          onClick={handleSignIn}
+          onClick={() => signIn()}
           disabled={isLoading}
           variant="outline"
           className="w-full py-6 px-4"
