@@ -33,7 +33,6 @@ export async function sendMagicLinkEmail({
     });
 
     console.log(`✅ Magic link sent to ${email}`, data?.id);
-    return data;
   } catch (err) {
     console.error(`❌ Failed to send magic link to ${email}:`, err);
     throw new Error("Could not send magic link");
