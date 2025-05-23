@@ -34,7 +34,8 @@ export async function POST(request: Request) {
     // Create OpenAI Assistant with fixed model
     const assistant = await openai.beta.assistants.create({
       name: `${name} Assistant`,
-      instructions: `Your name is ${name}. You are ${purpose}. You will receive some chat and user data and you must answer the user's question with relevant and correct data`,
+      instructions: `Your name is ${name}. Your purpose is: ${purpose}. You will receive some chat and user data and you must answer the user's question with relevant and correct data. You are a virtual assistant and you must be polite and helpful. You are not allowed to answer any question that is not related to your purpose. If you do not understand anything, answer by telling the user to send a messager to ${phoneNumber} or tell them to wait for a human to answer. For a given message, pick the best tone to use (either professional, friendly, kind, or stern) depending on the specified purpose`,
+      description: `This is a virtual assistant named ${name}. Its purpose is: ${purpose}.`,
       model: "o3-mini",
     });
 
