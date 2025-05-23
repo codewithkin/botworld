@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { MessageCircleCode } from "lucide-react";
 import Image from "next/image";
@@ -21,6 +22,7 @@ function StepTwo({ setStep, step }: { setStep: any; step: number }) {
         />
       ),
       description: "Connect with customers through WhatsApp messaging",
+      disabled: false,
     },
     {
       id: "telegram",
@@ -35,12 +37,14 @@ function StepTwo({ setStep, step }: { setStep: any; step: number }) {
         />
       ),
       description: "Deploy your bot on the Telegram platform",
+      disabled: true,
     },
     {
       id: "both",
       label: "Both Platforms",
       icon: <MessageCircleCode className="h-6 w-6" />,
       description: "Enable your bot on both WhatsApp and Telegram",
+      disabled: true,
     },
   ];
 
@@ -56,15 +60,19 @@ function StepTwo({ setStep, step }: { setStep: any; step: number }) {
         <article className="flex flex-col gap-4 w-full">
           <Label className="text-base">Select Platform</Label>
 
-          {platforms.map(({ id, label, icon, description }) => (
+          {platforms.map(({ id, label, icon, description, disabled }) => (
             <article
               key={id}
-              className={`p-4 border rounded-lg cursor-pointer transition-all ${
+              className={`p-4 border rounded-lg transition-all ${
+                disabled
+                  ? "opacity-50 cursor-not-allowed"
+                  : "cursor-pointer hover:border-muted-foreground/50"
+              } ${
                 platform === id
                   ? "border-primary bg-primary/10"
-                  : "border-muted-foreground/30 hover:border-muted-foreground/50"
+                  : "border-muted-foreground/30"
               }`}
-              onClick={() => setPlatform(id)}
+              onClick={() => !disabled && setPlatform(id)}
             >
               <div className="flex items-center gap-4">
                 <input
@@ -73,19 +81,32 @@ function StepTwo({ setStep, step }: { setStep: any; step: number }) {
                   name="platform"
                   value={id}
                   checked={platform === id}
+                  disabled={disabled}
                   className="mt-1 h-4 w-4 text-primary focus:ring-primary"
                   onChange={() => {}}
                 />
                 <div className="flex items-center gap-3">
                   <span
-                    className={`${platform === id ? "text-primary" : "text-muted-foreground"}`}
+                    className={`${disabled ? "opacity-70" : ""} ${
+                      platform === id ? "text-primary" : "text-muted-foreground"
+                    }`}
                   >
                     {icon}
                   </span>
                   <div className="flex flex-col gap-1">
-                    <Label htmlFor={id} className="text-base cursor-pointer">
-                      {label}
-                    </Label>
+                    <div className="flex items-center gap-2">
+                      <Label
+                        htmlFor={id}
+                        className={`text-base ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
+                      >
+                        {label}
+                      </Label>
+                      {disabled && (
+                        <Badge variant="outline" className="text-xs">
+                          Coming soon
+                        </Badge>
+                      )}
+                    </div>
                     <p className="text-sm text-muted-foreground">
                       {description}
                     </p>
