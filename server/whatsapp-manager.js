@@ -85,24 +85,58 @@ async function createWhatsAppClient(botId, socket) {
 
   client.on("message", async (msg) => {
     try {
-      if (!msg.body) return;
-
-      console.log("We just received a message: ", msg);
-
+      // 1. Ignore group messages if not mentioned
       const chat = await msg.getChat();
-      const contact = await msg.getContact();
 
+      if (chat.isGroup) return;
+
+      // 2. Ignore own messages and non-text
+      if (msg.fromMe || !msg.body) return;
+
+      // 3. Check if user has opted-in (Redis tracking)
+      const isAllowed = await redis.get(`bot:${botId}:allowed:${msg.from}`);
+      if (!isAllowed) {
+        console.log(`Ignoring message from unauthorized user: ${msg.from}`);
+        return;
+      }
+
+      // 4. Rate limiting (5 messages/minute per user)
+      // const rateKey = `bot:${botId}:rate:${msg.from}`;
+      // const currentCount = await redis.incr(rateKey);
+      // if (currentCount > 5) {
+      //   await msg.reply("⚠️ Too many requests. Please wait a moment.");
+      //   await redis.expire(rateKey, 60);
+      //   return;
+      // }
+
+      // 5. Check if message is a command
+      // const isCommand = msg.body.startsWith("!bot");
+      // if (!isCommand) return;
+
+      console.log(`Processing valid message from ${msg.from}: ${msg.body}`);
+
+      // 6. Get cached response if available
+      const cacheKey = `bot:${botId}:cache:${msg.body}`;
+      const cachedResponse = await redis.get(cacheKey);
+
+      if (cachedResponse) {
+        await msg.reply(cachedResponse);
+        return;
+      }
+
+      // Proceed with OpenAI processing
       const assistantId = await redis.get(`bot:${botId}:assistantId`);
       if (!assistantId) {
         console.error(`No assistant found for bot: ${botId}`);
         return;
       }
 
+      // Create thread and process message
       const thread = await openai.beta.threads.create();
 
       await openai.beta.threads.messages.create(thread.id, {
         role: "user",
-        content: `User data: ${contact}, chat: ${chat}, message: ${msg.body}. Here's some useful data: {from ${msg.from}, forwarded: ${msg.isForwarded}, Device type: ${msg.deviceType}}`,
+        content: `Message from ${msg.from}: ${msg.body}`,
       });
 
       const run = await openai.beta.threads.runs.create(thread.id, {
@@ -125,6 +159,8 @@ async function createWhatsAppClient(botId, socket) {
 
       if (assistantMessage) {
         await msg.reply(assistantMessage);
+        // Cache response for 1 hour
+        await redis.setex(cacheKey, 3600, assistantMessage);
       }
     } catch (error) {
       console.error(`Message handling error for bot ${botId}:`, error);
