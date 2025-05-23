@@ -102,7 +102,7 @@ async function createWhatsAppClient(botId, socket) {
 
       await openai.beta.threads.messages.create(thread.id, {
         role: "user",
-        content: `User data: ${contact}, chat: ${chat}, message: ${msg.body}`,
+        content: `User data: ${contact}, chat: ${chat}, message: ${msg.body}. Here's some useful data: {from ${msg.from}, forwarded: ${msg.isForwarded}, Device type: ${msg.deviceType}}`,
       });
 
       const run = await openai.beta.threads.runs.create(thread.id, {
