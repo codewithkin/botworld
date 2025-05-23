@@ -87,7 +87,7 @@ async function createWhatsAppClient(botId, socket) {
     try {
       if (!msg.body) return;
 
-      console.log("We just received a message: ", msg.body);
+      console.log("We just received a message: ", msg);
 
       const chat = await msg.getChat();
       const contact = await msg.getContact();
@@ -142,4 +142,3 @@ module.exports = {
   initializeExistingBots,
   activeClients,
 };
-
