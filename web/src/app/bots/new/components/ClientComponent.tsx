@@ -1,9 +1,9 @@
 "use client";
 import { useState, useEffect, ReactNode } from "react";
-import StepOne from "./steps/one/StepOne";
-import StepTwo from "./steps/one/StepTwo";
-import StepThree from "./steps/one/StepThree";
-import StepFour from "./steps/one/StepFour";
+import StepOne from "./steps/StepOne";
+import StepTwo from "./steps/StepTwo";
+import StepThree from "./steps/StepThree";
+import StepFour from "./steps/StepFour";
 
 type Step = {
   title: string;
