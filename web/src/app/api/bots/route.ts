@@ -5,8 +5,41 @@ import { openai } from "@/lib/ai/openai";
 import OpenAI from "openai";
 import redis from "@/lib/redis"; // Add Redis import
 import { Prisma } from "@/generated/prisma";
+import { plans } from "@/lib/plans/limitations";
 
 export async function POST(request: Request) {
+
+  // Get the user's session
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  // Check what the user's plan is
+  const user = await prisma.user.findUnique({
+    where: {
+      id: session?.user?.id,
+    },
+    select: {
+      plan: true,
+    },
+  });
+
+  // If the user is on the free plan, check if they have reached the limit of 1 bot
+  const botCount = await prisma.bot.count({
+    where: {
+      userId: session?.user?.id,
+    },
+  });
+
+  if (botCount >= plans[user?.plan as keyof typeof plans].bots) {
+    return new NextResponse(
+      JSON.stringify({
+        error: `You have reached the limit of ${plans[user?.plan as keyof typeof plans].bots} bots for your plan. Please upgrade your plan to create more bots.`,
+      }),
+      {
+        status: 403
+      }
+    )
+  }
+
   // CORS
   const corsHeaders = {
     "Access-Control-Allow-Origin": process.env

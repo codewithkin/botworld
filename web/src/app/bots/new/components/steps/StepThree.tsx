@@ -7,6 +7,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 function StepThree({ setStep, step }: { setStep: any; step: number }) {
   const [botData, setBotData] = useState<{
@@ -17,6 +18,8 @@ function StepThree({ setStep, step }: { setStep: any; step: number }) {
 
   const [whatsappNumber, setPhoneNumber] = useState("");
   const [telegramUsername, setTelegramUsername] = useState("");
+
+  const router = useRouter();
 
   // Create bot mutation
   const { mutate, isPending: creatingBot } = useMutation({
@@ -48,6 +51,7 @@ function StepThree({ setStep, step }: { setStep: any; step: number }) {
 
       // Submit to API
       const { data } = await axios.post("/api/bots", fullData);
+
       return data;
     },
     onSuccess: (newBot) => {
@@ -64,6 +68,20 @@ function StepThree({ setStep, step }: { setStep: any; step: number }) {
       setStep(step + 1);
     },
     onError: (error: any) => {
+      if (error.response?.status === 403) {
+        toast.error("You have reached the limit of bots for your plan", {
+          description: "Please upgrade your plan to create more bots.",
+          action: {
+            label: "Upgrade",
+            onClick: () => {
+              return router.push("/upgrade")
+            }
+          }
+        });
+
+        return;
+      }
+
       toast.error("Failed to create bot", {
         description:
           error.response?.data?.message || "An unexpected error occurred",
