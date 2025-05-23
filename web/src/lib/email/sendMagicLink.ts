@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
 
+const RESEND_API_KEY="re_DUzD5D2x_GscDh43YBzVwaSvkqPCjr1KV"
+
 export async function sendMagicLinkEmail({
   email,
   token,
