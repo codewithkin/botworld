@@ -7,13 +7,21 @@ import redis from "@/lib/redis"; // Add Redis import
 import { Prisma } from "@/generated/prisma";
 
 export async function POST(request: Request) {
+  // CORS
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": process.env
+      .NEXT_PUBLIC_WHATSAPP_SERVER_URL as string,
+    "Access-Control-Allow-Methods": "POST",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+
   try {
     // Authentication
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session?.user) {
       return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { "Content-Type": "application/json" },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -27,6 +35,7 @@ export async function POST(request: Request) {
         JSON.stringify({ error: "Name and purpose are required" }),
         {
           status: 400,
+          headers: { ...corsHeaders },
         },
       );
     }
@@ -58,7 +67,7 @@ export async function POST(request: Request) {
 
     return new NextResponse(JSON.stringify(newBot), {
       status: 201,
-      headers: { "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error: any) {
     console.error("[BOTS_POST]", error);
@@ -70,7 +79,7 @@ export async function POST(request: Request) {
           message: error.message,
           code: error.code,
         }),
-        { status: 500 },
+        { status: 500, headers: { ...corsHeaders } },
       );
     }
 
@@ -80,6 +89,7 @@ export async function POST(request: Request) {
           JSON.stringify({ error: "Bot with this name already exists" }),
           {
             status: 409,
+            headers: { ...corsHeaders },
           },
         );
       }
@@ -87,7 +97,10 @@ export async function POST(request: Request) {
 
     return new NextResponse(
       JSON.stringify({ error: "Internal Server Error" }),
-      { status: 500 },
+      {
+        status: 500,
+        headers: { ...corsHeaders },
+      },
     );
   } finally {
     await prisma.$disconnect();
