@@ -54,6 +54,7 @@ export async function POST(request: Request) {
 
     // Store assistant ID in Redis with expiration (1 week)
     await redis.set(`bot:${newBot.id}:assistantId`, assistant.id, "EX", 604800);
+    await redis.set(`bot:${newBot.id}:userId`, session.user.id, "EX", 604800);
 
     return new NextResponse(JSON.stringify(newBot), {
       status: 201,
