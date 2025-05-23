@@ -17,6 +17,8 @@ model User {
   createdAt     DateTime
   updatedAt     DateTime
 
+  plan String @default("free")
+
   bots      Bot[]
   documents Document[]
   messages  Message[]

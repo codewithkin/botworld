@@ -17,7 +17,9 @@ model User {
   createdAt     DateTime
   updatedAt     DateTime
 
-   bots      Bot[]
+  plan      String @default("free")
+
+  bots      Bot[]
   documents Document[]
   messages Message[]
   sessions      Session[]
