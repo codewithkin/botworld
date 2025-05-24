@@ -19,6 +19,7 @@
     "openai": "^4.100.0",
     "qrcode": "^1.5.4",
     "socket.io": "^4.8.1",
+    "sqlite3": "^5.1.7",
     "whatsapp-web.js": "^1.28.0"
   }
 }

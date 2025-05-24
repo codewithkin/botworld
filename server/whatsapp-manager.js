@@ -1,8 +1,8 @@
 const {Client, LocalAuth} = require("whatsapp-web.js");
 const qrcode = require("qrcode");
-const redis = require("./redis");
+const db = require("./lib/sqlite");
 const {OpenAI} = require("openai");
-const fetch = require("node-fetch");
+const axios = require("axios"); 
 
 require("dotenv").config();
 
@@ -14,18 +14,30 @@ const activeClients = new Map();
 
 async function initializeExistingBots() {
   try {
-    const keys = await redis.keys("whatsapp:*:session");
+    // Since we're using SQLite, we need a different approach to find existing sessions
+    // We'll look for session files in the filesystem instead
+    const fs = require("fs");
+    const path = require("path");
+    const sessionDir = path.join(__dirname, "../sessions");
 
-    for (const key of keys) {
-      const botId = key.split(":")[1];
-      console.log(`Initializing existing bot: ${botId}`);
+    if (!fs.existsSync(sessionDir)) {
+      return;
+    }
 
-      try {
-        const client = await createWhatsAppClient(botId);
-        activeClients.set(botId, client);
-        console.log(`Successfully initialized bot: ${botId}`);
-      } catch (error) {
-        console.error(`Failed to initialize bot ${botId}:`, error);
+    const sessionFiles = fs.readdirSync(sessionDir);
+
+    for (const file of sessionFiles) {
+      if (file.endsWith(".json")) {
+        const botId = file.replace(".json", "");
+        console.log(`Initializing existing bot: ${botId}`);
+
+        try {
+          const client = await createWhatsAppClient(botId);
+          activeClients.set(botId, client);
+          console.log(`Successfully initialized bot: ${botId}`);
+        } catch (error) {
+          console.error(`Failed to initialize bot ${botId}:`, error);
+        }
       }
     }
   } catch (error) {
@@ -43,26 +55,20 @@ async function createWhatsAppClient(botId, socket) {
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     },
     authStrategy: new LocalAuth({
+      clientId: botId, // Use botId as clientId for session file naming
       dataPath: "sessions",
     }),
   });
 
-  const savedSession = await redis.get(`whatsapp:${botId}:session`);
-  if (savedSession) {
-    client.authStrategy.restore({session: JSON.parse(savedSession)});
-  }
-
   client.on("auth_failure", (msg) => {
     console.error(`Auth failure for bot ${botId}:`, msg);
     activeClients.delete(botId);
-    redis.del(`whatsapp:${botId}:session`);
     if (socket) socket.emit("error", "WhatsApp authentication failed");
   });
 
   client.on("disconnected", (reason) => {
     console.log(`Client disconnected for bot ${botId}:`, reason);
     activeClients.delete(botId);
-    redis.del(`whatsapp:${botId}:session`);
     if (socket) socket.emit("status", "Disconnected - Reconnecting...");
     setTimeout(() => createWhatsAppClient(botId), 5000);
   });
@@ -74,8 +80,7 @@ async function createWhatsAppClient(botId, socket) {
     }
   });
 
-  client.on("authenticated", (session) => {
-    redis.set(`whatsapp:${botId}:session`, JSON.stringify(session));
+  client.on("authenticated", () => {
     if (socket) socket.emit("status", "connected");
   });
 
@@ -90,21 +95,17 @@ async function createWhatsAppClient(botId, socket) {
 
       console.log("We just received a message:", msg.body);
 
-      if(chat.isReadOnly) {
+      if (chat.isReadOnly) {
         return;
       }
 
       if (chat.isGroup) return;
       if (msg.fromMe || !msg.body) return;
 
-      const cacheKey = `bot:${botId}:cache:${msg.body}`;
-      const cachedResponse = await redis.get(cacheKey);
-      if (cachedResponse) {
-        await msg.reply(cachedResponse);
-        return;
-      }
+      // Cache implementation can be added later if needed
+      // For now, we'll skip caching to keep it simple
 
-      const assistantId = await redis.get(`bot:${botId}:assistantId`);
+      const assistantId = await db.getBotConfig(botId, "assistantId");
       if (!assistantId) return;
 
       const thread = await openai.beta.threads.create();
@@ -132,9 +133,8 @@ async function createWhatsAppClient(botId, socket) {
 
       if (assistantMessage) {
         await msg.reply(assistantMessage);
-        await redis.setex(cacheKey, 3600, assistantMessage);
 
-        const userId = await redis.get(`bot:${botId}:userId`);
+        const userId = await db.getBotConfig(botId, "userId");
         const messageData = {
           botId,
           userId,

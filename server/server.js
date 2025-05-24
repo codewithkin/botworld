@@ -2,8 +2,11 @@
 const express = require("express");
 const {createServer} = require("http");
 const {Server} = require("socket.io");
-const redis = require("./redis");
-const {createWhatsAppClient} = require("./whatsapp-manager");
+const db = require("./lib/sqlite"); // Changed from redis to sqlite
+const {
+  createWhatsAppClient,
+  initializeExistingBots,
+} = require("./whatsapp-manager");
 
 const app = express();
 const httpServer = createServer(app);
@@ -21,18 +24,15 @@ const io = new Server(httpServer, {
   transports: ["websocket", "polling"],
 });
 
-// Initialize existing bots when Redis connects
-redis.on("connect", async () => {
-  console.log("Connected to Redis");
+// Initialize existing bots when server starts
+(async () => {
   try {
-    const {initializeExistingBots} = require("./whatsapp-manager");
+    console.log("Initializing existing bots...");
     await initializeExistingBots();
   } catch (error) {
     console.error("Error initializing bots:", error);
   }
-});
-
-redis.on("error", (err) => console.error("Redis error:", err));
+})();
 
 io.on("connection", (socket) => {
   const botId = socket.handshake.auth.botId;
