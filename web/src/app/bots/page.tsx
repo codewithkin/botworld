@@ -110,8 +110,8 @@ function BotsPage() {
             {/* Bots Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {bots.map((bot) => (
-                    <article className="px-2 pt-2 pb-4 flex flex-col justify-center items-center rounded-lg bg-orange-400">
-                        <Card key={bot.id} className="p-6 hover:shadow-md transition-shadow w-full">
+                    <article className="px-2 pt-2 pb-4 flex flex-col justify-center items-center rounded-2xl bg-orange-400">
+                        <Card key={bot.id} className="p-6 hover:shadow-md transition-shadow w-full rounded-2xl">
                             <div className="flex justify-between items-start">
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 text-primary font-bold">
