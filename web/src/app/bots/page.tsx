@@ -61,7 +61,7 @@ function BotsPage() {
 
     if (!bots || bots.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center h-[60vh] text-center p-6">
+            <div className="flex flex-col items-center justify-center h-[60vh] text-center p-2 md:p-6">
                 <Icons.bot className="h-24 w-24 text-muted-foreground mb-6" />
                 <h2 className="text-2xl font-bold tracking-tight mb-2">
                     No AI Assistants Found
@@ -78,7 +78,7 @@ function BotsPage() {
     }
 
     return (
-        <div className="p-6">
+        <div className="p-2 md:p-6">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                 <div>
@@ -95,7 +95,7 @@ function BotsPage() {
                     )}
                 </div>
 
-                <div className="flex gap-2 w-full md:w-auto">
+                <div className="flex md:flex-row flex-col gap-2 w-full md:w-auto">
                     <Button variant="outline" className="w-full md:w-auto">
                         <Icons.filter className="mr-2 h-4 w-4" />
                         Filter
