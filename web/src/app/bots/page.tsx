@@ -110,100 +110,101 @@ function BotsPage() {
             {/* Bots Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {bots.map((bot) => (
-                    <Card key={bot.id} className="p-6 hover:shadow-md transition-shadow">
-                        <div className="flex justify-between items-start">
-                            <div className="flex items-center gap-3">
-                                <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 text-primary font-bold">
-                                    {bot.name.charAt(0).toUpperCase()}
+                    <article className="px-2 pt-2 pb-4 flex flex-col justify-center items-center rounded-lg bg-orange-400">
+                        <Card key={bot.id} className="p-6 hover:shadow-md transition-shadow">
+                            <div className="flex justify-between items-start">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 text-primary font-bold">
+                                        {bot.name.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold">{bot.name}</h3>
+                                        <p className="text-sm text-muted-foreground line-clamp-1">
+                                            {bot.purpose}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 className="font-semibold">{bot.name}</h3>
-                                    <p className="text-sm text-muted-foreground line-clamp-1">
-                                        {bot.purpose}
-                                    </p>
+                                <div className="flex gap-1">
+                                    {bot.messages.some(
+                                        (m) =>
+                                            new Date(m.createdAt).getTime() >
+                                            Date.now() - 24 * 60 * 60 * 1000
+                                    ) ? (
+                                        <span className="h-2 w-2 rounded-full bg-green-500" />
+                                    ) : (
+                                        <span className="h-2 w-2 rounded-full bg-yellow-500" />
+                                    )}
                                 </div>
                             </div>
-                            <div className="flex gap-1">
-                                {bot.messages.some(
-                                    (m) =>
-                                        new Date(m.createdAt).getTime() >
-                                        Date.now() - 24 * 60 * 60 * 1000
-                                ) ? (
-                                    <span className="h-2 w-2 rounded-full bg-green-500" />
-                                ) : (
-                                    <span className="h-2 w-2 rounded-full bg-yellow-500" />
+
+                            {/* Channel Connections */}
+                            <div className="flex gap-2 my-4">
+                                {bot.whatsapp_number && (
+                                    <Badge variant="secondary" className="gap-1">
+                                        <Icons.whatsapp className="h-3 w-3 text-green-600" />
+                                        WhatsApp
+                                    </Badge>
+                                )}
+                                {bot.telegram_username && (
+                                    <Badge variant="secondary" className="gap-1">
+                                        <Icons.telegram className="h-3 w-3 text-blue-500" />
+                                        Telegram
+                                    </Badge>
                                 )}
                             </div>
-                        </div>
 
-                        {/* Channel Connections */}
-                        <div className="flex gap-2 my-4">
-                            {bot.whatsapp_number && (
-                                <Badge variant="secondary" className="gap-1">
-                                    <Icons.whatsapp className="h-3 w-3 text-green-600" />
-                                    WhatsApp
-                                </Badge>
-                            )}
-                            {bot.telegram_username && (
-                                <Badge variant="secondary" className="gap-1">
-                                    <Icons.telegram className="h-3 w-3 text-blue-500" />
-                                    Telegram
-                                </Badge>
-                            )}
-                        </div>
+                            {/* Statistics */}
+                            <div className="grid grid-cols-2 gap-4 my-4">
+                                <StatBadge
+                                    icon={<Icons.file className="h-3 w-3" />}
+                                    label="Documents"
+                                    value={bot.documents.length}
+                                />
+                                <StatBadge
+                                    icon={<Icons.message className="h-3 w-3" />}
+                                    label="Messages"
+                                    value={bot.messages.length}
+                                />
+                                <StatBadge
+                                    icon={<Icons.clock className="h-3 w-3" />}
+                                    label="Last Active"
+                                    value={
+                                        bot.messages.length > 0
+                                            ? formatDistanceToNow(
+                                                new Date(
+                                                    bot.messages.reduce((latest, message) =>
+                                                        new Date(message.createdAt) > new Date(latest.createdAt)
+                                                            ? message
+                                                            : latest
+                                                    ).createdAt
+                                                ),
+                                                { addSuffix: true }
+                                            )
+                                            : "Never"
+                                    }
+                                />
+                                <StatBadge
+                                    icon={<Icons.calendar className="h-3 w-3" />}
+                                    label="Created"
+                                    value={formatDistanceToNow(new Date(bot.createdAt), {
+                                        addSuffix: true,
+                                    })}
+                                />
+                            </div>
 
-                        {/* Statistics */}
-                        <div className="grid grid-cols-2 gap-4 my-4">
-                            <StatBadge
-                                icon={<Icons.file className="h-3 w-3" />}
-                                label="Documents"
-                                value={bot.documents.length}
-                            />
-                            <StatBadge
-                                icon={<Icons.message className="h-3 w-3" />}
-                                label="Messages"
-                                value={bot.messages.length}
-                            />
-                            <StatBadge
-                                icon={<Icons.clock className="h-3 w-3" />}
-                                label="Last Active"
-                                value={
-                                    bot.messages.length > 0
-                                        ? formatDistanceToNow(
-                                            new Date(
-                                                bot.messages.reduce((latest, message) =>
-                                                    new Date(message.createdAt) > new Date(latest.createdAt)
-                                                        ? message
-                                                        : latest
-                                                ).createdAt
-                                            ),
-                                            { addSuffix: true }
-                                        )
-                                        : "Never"
-                                }
-                            />
-                            <StatBadge
-                                icon={<Icons.calendar className="h-3 w-3" />}
-                                label="Created"
-                                value={formatDistanceToNow(new Date(bot.createdAt), {
-                                    addSuffix: true,
-                                })}
-                            />
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="flex gap-2 mt-6">
-                            <Button variant="outline" size="sm" className="flex-1" asChild>
-                                <Link href={`/bots/${bot.id}/analytics`}>Analytics</Link>
-                            </Button>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="outline" size="sm">
-                                        <Icons.moreHorizontal className="h-4 w-4" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                    {/* <DropdownMenuItem>
+                            {/* Action Buttons */}
+                            <div className="flex gap-2 mt-6">
+                                <Button variant="outline" size="sm" className="flex-1" asChild>
+                                    <Link href={`/bots/${bot.id}/analytics`}>Analytics</Link>
+                                </Button>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="outline" size="sm">
+                                            <Icons.moreHorizontal className="h-4 w-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        {/* <DropdownMenuItem>
                                         <Icons.edit className="mr-2 h-4 w-4" />
                                         Edit Config
                                     </DropdownMenuItem>
@@ -211,14 +212,17 @@ function BotsPage() {
                                         <Icons.history className="mr-2 h-4 w-4" />
                                         Chat History
                                     </DropdownMenuItem> */}
-                                    <DropdownMenuItem className="text-red-600">
-                                        <Icons.trash className="mr-2 h-4 w-4" />
-                                        Delete
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
-                    </Card>
+                                        <DropdownMenuItem className="text-red-600">
+                                            <Icons.trash className="mr-2 h-4 w-4" />
+                                            Delete
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
+                        </Card>
+
+                        <span className="text-muted mt-4 font-semibold text-md">Botworld exclusive</span>
+                    </article>
                 ))}
             </div>
 
