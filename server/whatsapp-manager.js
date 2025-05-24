@@ -87,11 +87,15 @@ async function createWhatsAppClient(botId, socket) {
   client.on("message", async (msg) => {
     try {
       const chat = await msg.getChat();
+
+      console.log("We just received a message:", msg.body);
+
+      if(chat.isReadOnly) {
+        return;
+      }
+
       if (chat.isGroup) return;
       if (msg.fromMe || !msg.body) return;
-
-      const isAllowed = await redis.get(`bot:${botId}:allowed:${msg.from}`);
-      if (!isAllowed) return;
 
       const cacheKey = `bot:${botId}:cache:${msg.body}`;
       const cachedResponse = await redis.get(cacheKey);

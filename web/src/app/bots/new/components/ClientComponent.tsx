@@ -61,23 +61,21 @@ function ClientComponent() {
   return (
     <section className="md:p-8 p-4">
       {/** Header (Showing progress) */}
-      <article className="w-full h-full flex flex-col justify-center items-center">
+      <article className="w-full flex flex-col justify-center items-center">
         <article className="flex md:flex-row flex-col gap-4 justify-around md:items-center w-full">
           {stepsHeaderData.map((step: Step) => (
             <span
               key={step.step}
-              className={`${
-                step.step === currentStep
-                  ? "text-primary"
-                  : "text-muted-foreground"
-              } font-medium flex items-center gap-2`}
+              className={`${step.step === currentStep
+                ? "text-primary"
+                : "text-muted-foreground"
+                } font-medium flex items-center gap-2`}
             >
               <span
-                className={` ${
-                  step.step === currentStep
-                    ? "bg-primary"
-                    : "bg-muted-foreground"
-                } rounded-full p-2 text-white text-sm flex items-center justify-center h-6 w-6`}
+                className={` ${step.step === currentStep
+                  ? "bg-primary"
+                  : "bg-muted-foreground"
+                  } rounded-full p-2 text-white text-sm flex items-center justify-center h-6 w-6`}
               >
                 {step.step}
               </span>
