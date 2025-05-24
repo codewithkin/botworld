@@ -1,12 +1,11 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import Link from "next/link";
 import { Bot, Message, Document } from "@/generated/prisma";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Icons } from "./components/icons";
 import { Badge } from "@/components/ui/badge";
 import {
     DropdownMenu,
@@ -18,6 +17,9 @@ import { formatDistanceToNow } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import NewBotFAB from "@/components/shared/NewBotFAB";
 import { plans } from "@/lib/plans/limitations";
+import { toast } from "sonner";
+import { Icons } from "./components/icons";
+import { Loader } from "lucide-react";
 
 type BotWithRelations = Bot & {
     documents: Document[];
@@ -25,6 +27,7 @@ type BotWithRelations = Bot & {
 };
 
 function BotsPage() {
+    const queryClient = useQueryClient();
     const { data: bots, isLoading } = useQuery({
         queryKey: ["bots"],
         queryFn: async (): Promise<BotWithRelations[]> => {
@@ -33,7 +36,22 @@ function BotsPage() {
         },
     });
 
-    console.log("Bots: ", bots);
+    const deleteMutation = useMutation({
+        mutationFn: async (botId: string) => {
+            await axios.delete(`/api/bots/${botId}`);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["bots"] });
+            toast.success("Bot deleted successfully");
+        },
+        onError: () => {
+            toast.error("Failed to delete bot");
+        }
+    });
+
+    const handleDelete = (botId: string) => {
+        deleteMutation.mutate(botId);
+    };
 
     const { data: user } = useQuery({
         queryKey: ["user"],
@@ -110,8 +128,8 @@ function BotsPage() {
             {/* Bots Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {bots.map((bot) => (
-                    <article className="px-2 pt-2 pb-4 flex flex-col justify-center items-center rounded-2xl bg-orange-400">
-                        <Card key={bot.id} className="p-6 hover:shadow-md transition-shadow w-full rounded-2xl">
+                    <article key={bot.id} className="px-2 pt-2 pb-4 flex flex-col justify-center items-center rounded-2xl bg-orange-400">
+                        <Card className="p-6 hover:shadow-md transition-shadow w-full rounded-2xl">
                             <div className="flex justify-between items-start">
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 text-primary font-bold">
@@ -194,25 +212,30 @@ function BotsPage() {
 
                             {/* Action Buttons */}
                             <div className="flex gap-2 mt-6">
-                                <Button variant="default" size="lg" className="flex-1 bg-gradient-to-r from-sky-400 to-blue-500 text-white" asChild>
+                                <Button
+                                    variant="default"
+                                    size="lg"
+                                    className="flex-1 bg-gradient-to-r from-sky-400 to-blue-500 text-white"
+                                    asChild
+                                >
                                     <Link href={`/bots/${bot.id}/analytics`}>Analytics</Link>
                                 </Button>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <Button variant="secondary" size="lg">
-                                            <Icons.moreHorizontal className="h-4 w-4" />
+                                            {deleteMutation.isPending ? (
+                                                <Loader className="h-4 w-4 animate-spin" />
+                                            ) : (
+                                                <Icons.moreHorizontal className="h-4 w-4" />
+                                            )}
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                        {/* <DropdownMenuItem>
-                                        <Icons.edit className="mr-2 h-4 w-4" />
-                                        Edit Config
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        <Icons.history className="mr-2 h-4 w-4" />
-                                        Chat History
-                                    </DropdownMenuItem> */}
-                                        <DropdownMenuItem className="text-red-600">
+                                        <DropdownMenuItem
+                                            className="text-red-600"
+                                            onClick={() => handleDelete(bot.id)}
+                                            disabled={deleteMutation.isPending}
+                                        >
                                             <Icons.trash className="mr-2 h-4 w-4" />
                                             Delete
                                         </DropdownMenuItem>
