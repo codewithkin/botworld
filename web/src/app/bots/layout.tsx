@@ -1,5 +1,6 @@
-import NewBotFAB from "@/components/shared/NewBotFAB"
-import { Sidebar, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import NewBotFAB from "@/components/shared/NewBotFAB";
+import Sidebar from "@/components/shared/Sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Metadata } from "next"
 import { ReactNode } from "react"
 
