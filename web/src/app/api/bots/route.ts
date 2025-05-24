@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { auth, prisma } from "@/lib/auth";
 import { openai } from "@/lib/ai/openai";
@@ -137,5 +137,36 @@ export async function POST(request: Request) {
     );
   } finally {
     await prisma.$disconnect();
+  }
+}
+
+export async function GET (request: NextRequest) {
+  try {
+    // Get the user's session info
+    const data = await auth.api.getSession({
+      headers: await headers()
+    })
+
+    // Get the user's id
+    const id = data?.user.id;
+
+    // Get the bots created by the user
+    const bots = await prisma.bot.findMany({
+      where: {
+        userId: id
+      },
+      include: {
+        messages: true,
+        documents: true
+      }
+    })
+
+    return NextResponse.json({bots})
+  } catch (e) {
+    console.log("An error occured while getting all bots: ", e);
+
+    return NextResponse.json({
+      message: "An error occured while getting all bots"
+    }, {status: 400})
   }
 }
