@@ -111,7 +111,7 @@ function BotsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {bots.map((bot) => (
                     <article className="px-2 pt-2 pb-4 flex flex-col justify-center items-center rounded-lg bg-orange-400">
-                        <Card key={bot.id} className="p-6 hover:shadow-md transition-shadow">
+                        <Card key={bot.id} className="p-6 hover:shadow-md transition-shadow w-full">
                             <div className="flex justify-between items-start">
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 text-primary font-bold">
@@ -140,8 +140,8 @@ function BotsPage() {
                             {/* Channel Connections */}
                             <div className="flex gap-2 my-4">
                                 {bot.whatsapp_number && (
-                                    <Badge variant="secondary" className="gap-1">
-                                        <Icons.whatsapp className="h-3 w-3 text-green-600" />
+                                    <Badge variant="secondary" className="gap-1 bg-green-500 text-white">
+                                        <Icons.whatsapp className="h-3 w-3 text-white" />
                                         WhatsApp
                                     </Badge>
                                 )}
@@ -154,7 +154,7 @@ function BotsPage() {
                             </div>
 
                             {/* Statistics */}
-                            <div className="grid grid-cols-2 gap-4 my-4">
+                            <div className="grid sm:grid-cols-2 gap-4 my-4">
                                 <StatBadge
                                     icon={<Icons.file className="h-3 w-3" />}
                                     label="Documents"
@@ -194,12 +194,12 @@ function BotsPage() {
 
                             {/* Action Buttons */}
                             <div className="flex gap-2 mt-6">
-                                <Button variant="outline" size="sm" className="flex-1" asChild>
+                                <Button variant="default" size="lg" className="flex-1 bg-gradient-to-r from-sky-400 to-blue-500 text-white" asChild>
                                     <Link href={`/bots/${bot.id}/analytics`}>Analytics</Link>
                                 </Button>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant="outline" size="sm">
+                                        <Button variant="secondary" size="lg">
                                             <Icons.moreHorizontal className="h-4 w-4" />
                                         </Button>
                                     </DropdownMenuTrigger>
@@ -221,7 +221,7 @@ function BotsPage() {
                             </div>
                         </Card>
 
-                        <span className="text-muted mt-4 font-semibold text-md">Botworld exclusive</span>
+                        <span className="text-muted mt-4 font-medium text-md">Botworld exclusive</span>
                     </article>
                 ))}
             </div>
@@ -244,7 +244,7 @@ function StatBadge({
         <div className="flex items-center gap-2 text-sm">
             <span className="text-muted-foreground">{icon}</span>
             <span className="font-medium">{label}:</span>
-            <span className="ml-auto font-semibold">{value}</span>
+            <span className="ml-auto">{value}</span>
         </div>
     );
 }
