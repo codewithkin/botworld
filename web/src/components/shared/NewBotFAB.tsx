@@ -25,7 +25,7 @@ function NewBotFAB() {
       <Dialog>
         <DialogTrigger asChild>
           <Button
-            className="rounded-full shadow-lg hover:shadow-xl transition-shadow h-14 w-14 md:h-auto md:w-auto md:px-4 md:py-2 absolute bottom-4 right-4 z-50"
+            className="rounded-full bg-gradient-to-r from-purple-500 to-orange-500 shadow-lg hover:shadow-xl transition-shadow h-14 w-14 md:h-auto md:w-auto md:px-4 md:py-2 absolute bottom-4 right-4 z-50"
             size="lg"
           >
             <Plus />
@@ -103,7 +103,7 @@ function NewBotFAB() {
     <div className="fixed bottom-4 right-4 z-50">
       <Button
         asChild
-        className="rounded-full shadow-lg hover:shadow-xl transition-shadow h-14 w-14 md:h-auto md:w-auto md:px-4 md:py-2"
+        className="rounded-full bg-gradient-to-r from-purple-500 to-orange-500 shadow-lg hover:shadow-xl transition-shadow h-14 w-14 md:h-auto md:w-auto md:px-4 md:py-2"
         size="lg"
       >
         <Link href="/bots/new">
