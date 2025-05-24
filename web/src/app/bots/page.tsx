@@ -150,12 +150,6 @@ function BotsPage() {
                                     Telegram
                                 </Badge>
                             )}
-                            {bot.phoneNumber && (
-                                <Badge variant="secondary" className="gap-1">
-                                    <Icons.phone className="h-3 w-3 text-purple-500" />
-                                    SMS
-                                </Badge>
-                            )}
                         </div>
 
                         {/* Statistics */}
@@ -209,14 +203,14 @@ function BotsPage() {
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
-                                    <DropdownMenuItem>
+                                    {/* <DropdownMenuItem>
                                         <Icons.edit className="mr-2 h-4 w-4" />
                                         Edit Config
                                     </DropdownMenuItem>
                                     <DropdownMenuItem>
                                         <Icons.history className="mr-2 h-4 w-4" />
                                         Chat History
-                                    </DropdownMenuItem>
+                                    </DropdownMenuItem> */}
                                     <DropdownMenuItem className="text-red-600">
                                         <Icons.trash className="mr-2 h-4 w-4" />
                                         Delete
