@@ -13,7 +13,7 @@ function BotsLayout({ children }: { children: ReactNode }) {
         <SidebarProvider>
             <Sidebar />
             <NewBotFAB />
-            <main className="p-4 md:p-8 w-full">
+            <main className="p-4 md:p-8 w-full flex flex-col">
                 <SidebarTrigger />
                 {children}
             </main>

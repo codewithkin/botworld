@@ -19,7 +19,7 @@ import NewBotFAB from "@/components/shared/NewBotFAB";
 import { plans } from "@/lib/plans/limitations";
 import { toast } from "sonner";
 import { Icons } from "./components/icons";
-import { Loader } from "lucide-react";
+import { Loader, PlusCircleIcon } from "lucide-react";
 
 type BotWithRelations = Bot & {
     documents: Document[];
@@ -80,15 +80,15 @@ function BotsPage() {
     if (!bots || bots.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center h-[60vh] text-center p-2 md:p-6">
-                <Icons.bot className="h-24 w-24 text-muted-foreground mb-6" />
+                <Icons.bot strokeWidth={1.5} className="h-24 w-24 text-black mb-6" />
                 <h2 className="text-2xl font-bold tracking-tight mb-2">
                     No AI Assistants Found
                 </h2>
-                <p className="text-muted-foreground mb-6">
+                <p className="text-muted-foreground mb-4">
                     Start by creating your first AI assistant to automate conversations
                 </p>
-                <Button asChild>
-                    <Link href="/bots/new">Create First Bot</Link>
+                <Button className="bg-gradient-to-r from-purple-400 to-blue-500" asChild>
+                    <Link href="/bots/new"><PlusCircleIcon />Create First Bot</Link>
                 </Button>
                 <NewBotFAB />
             </div>
