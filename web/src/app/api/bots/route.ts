@@ -3,7 +3,6 @@ import { headers } from "next/headers";
 import { auth, prisma } from "@/lib/auth";
 import { openai } from "@/lib/ai/openai";
 import OpenAI from "openai";
-import redis from "@/lib/redis"; // Add Redis import
 import { Prisma } from "@/generated/prisma";
 import { plans } from "@/lib/plans";
 
@@ -93,10 +92,6 @@ export async function POST(request: Request) {
         user: { connect: { id: session.user.id } },
       },
     });
-
-    // Store assistant ID in Redis with expiration (1 week)
-    await redis.set(`bot:${newBot.id}:assistantId`, assistant.id, "EX", 604800);
-    await redis.set(`bot:${newBot.id}:userId`, session.user.id, "EX", 604800);
 
     return new NextResponse(JSON.stringify(newBot), {
       status: 201,
