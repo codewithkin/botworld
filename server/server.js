@@ -2,11 +2,9 @@
 const express = require("express");
 const {createServer} = require("http");
 const {Server} = require("socket.io");
-const db = require("./lib/sqlite"); // Changed from redis to sqlite
-const {
-  createWhatsAppClient,
-  initializeExistingBots,
-} = require("./whatsapp-manager");
+const redis = require("./redis");
+const {createWhatsAppClient} = require("./whatsapp-manager");
+const db = require("./lib/sqlite");
 
 const app = express();
 const httpServer = createServer(app);
@@ -24,27 +22,47 @@ const io = new Server(httpServer, {
   transports: ["websocket", "polling"],
 });
 
-// Initialize existing bots when server starts
-(async () => {
-  try {
-    console.log("Initializing existing bots...");
-    await initializeExistingBots();
-  } catch (error) {
-    console.error("Error initializing bots:", error);
-  }
-})();
-
 io.on("connection", (socket) => {
   const botId = socket.handshake.auth.botId;
+  const userId = socket.handshake.auth.userId;
   console.log(`New connection for bot: ${botId}`);
 
   socket.on("init", async () => {
     try {
+      console.log("Initializing bot: ", botId);
       const client = await createWhatsAppClient(botId, socket);
       socket.emit("status", "Initializing WhatsApp connection...");
     } catch (error) {
       console.error(`Init error for bot ${botId}:`, error);
       socket.emit("error", "Failed to initialize client");
+    }
+  });
+
+  socket.on("authenticate", async ({botId, userId, assistantId}) => {
+    try {
+      console.log("User id: ", userId);
+      console.log("Assistant id: ", assistantId);
+
+      if (!userId || !assistantId) {
+        console.error("Both userId and assistantId are required");
+        socket.emit("error", "Both userId and assistantId are required");
+        return;
+      }
+
+      console.log("Setting values: ", {
+        botId,
+        userId,
+        assistantId,
+      });
+
+      await db.setBotConfig(botId, "userId", userId);
+      await db.setBotConfig(botId, "assistantId", assistantId);
+
+      console.log(`Stored IDs for bot ${botId}`);
+      console.log(`User ${userId} authenticated for bot ${botId}`);
+    } catch (error) {
+      console.error("Authentication storage failed:", error);
+      socket.emit("error", "Failed to store authentication data");
     }
   });
 

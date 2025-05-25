@@ -2,7 +2,7 @@ const {Client, LocalAuth} = require("whatsapp-web.js");
 const qrcode = require("qrcode");
 const db = require("./lib/sqlite");
 const {OpenAI} = require("openai");
-const axios = require("axios"); 
+const axios = require("axios");
 
 require("dotenv").config();
 
@@ -18,7 +18,9 @@ async function initializeExistingBots() {
     // We'll look for session files in the filesystem instead
     const fs = require("fs");
     const path = require("path");
-    const sessionDir = path.join(__dirname, "../sessions");
+    const sessionDir = path.join(__dirname, "./sessions/session");
+
+    console.log("Session directory: ", fs.readdirSync(sessionDir));
 
     if (!fs.existsSync(sessionDir)) {
       return;
@@ -99,14 +101,22 @@ async function createWhatsAppClient(botId, socket) {
         return;
       }
 
+      console.log("Message is not read only");
+
       if (chat.isGroup) return;
       if (msg.fromMe || !msg.body) return;
+
+      console.log("Passed all checks for chat");
 
       // Cache implementation can be added later if needed
       // For now, we'll skip caching to keep it simple
 
+
       const assistantId = await db.getBotConfig(botId, "assistantId");
+      console.log("Getting assistant id for bot: " + botId + "Assistant id: " + assistantId);
       if (!assistantId) return;
+
+      console.log("Passed all checks...replying");
 
       const thread = await openai.beta.threads.create();
       await openai.beta.threads.messages.create(thread.id, {

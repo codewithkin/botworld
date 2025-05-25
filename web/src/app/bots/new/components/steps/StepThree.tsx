@@ -1,15 +1,17 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { io, Socket } from "socket.io-client";
 
-function StepThree({ setStep, step }: { setStep: any; step: number }) {
+function StepThree({ setBotId, setStep, step }: { setBotId: any, setStep: any; step: number }) {
   const [botData, setBotData] = useState<{
     platform?: string;
     phoneNumber?: string;
@@ -20,12 +22,16 @@ function StepThree({ setStep, step }: { setStep: any; step: number }) {
   const [telegramUsername, setTelegramUsername] = useState("");
 
   const router = useRouter();
+  const socketRef = useRef<Socket | null>(null);
 
-  // Create bot mutation
+  useEffect(() => {
+    const savedData = JSON.parse(localStorage.getItem("bot") || "{}");
+    setBotData(savedData);
+  }, []);
+
   const { mutate, isPending: creatingBot } = useMutation({
     mutationKey: ["create-bot"],
     mutationFn: async () => {
-      // Prepare update data
       const updateData: Record<string, string> = {};
 
       if (
@@ -42,30 +48,54 @@ function StepThree({ setStep, step }: { setStep: any; step: number }) {
         updateData.telegramUsername = telegramUsername;
       }
 
-      // Save to localStoragestep={currentStep}
       const fullData = {
         ...botData,
         ...updateData,
       };
       localStorage.setItem("bot", JSON.stringify(fullData));
 
-      // Submit to API
       const { data } = await axios.post("/api/bots", fullData);
-
       return data;
     },
     onSuccess: (newBot) => {
       toast.success("Bot created successfully");
 
-      console.log("Data received from backend: ", newBot);
-
-      // Clear the bot data from localStorage
       localStorage.removeItem("bot");
-
-      // Set the botId
       localStorage.setItem("botId", newBot.id);
 
-      setStep(step + 1);
+      // Update the botId in the parent component
+      setBotId(newBot.id);
+      console.log("New bot created:", newBot);
+
+      socketRef.current = io(process.env.NEXT_PUBLIC_WHATSAPP_SERVER_URL!, {
+        auth: { botId: newBot.id },
+        withCredentials: true,
+        transports: ["websocket", "polling"],
+        reconnectionAttempts: 3,
+        reconnectionDelay: 1000,
+        timeout: 20000,
+      });
+
+      const socket = socketRef.current;
+
+      socket.on("connect", () => {
+        console.log("Socket connected in StepThree");
+        socket.emit("authenticate", {
+          botId: newBot.id,
+          userId: newBot.userId,
+          assistantId: newBot.assistantId,
+        });
+        setStep(step + 1);
+      });
+
+      socket.on("connect_error", (err) => {
+        console.error("Connection error in StepThree:", err);
+        toast.error("Failed to connect to socket.");
+      });
+
+      socket.on("disconnect", (reason) => {
+        console.warn("Socket disconnected in StepThree:", reason);
+      });
     },
     onError: (error: any) => {
       if (error.response?.status === 403) {
@@ -73,12 +103,9 @@ function StepThree({ setStep, step }: { setStep: any; step: number }) {
           description: "Please upgrade your plan to create more bots.",
           action: {
             label: "Upgrade",
-            onClick: () => {
-              return router.push("/upgrade")
-            }
-          }
+            onClick: () => router.push("/upgrade"),
+          },
         });
-
         return;
       }
 
@@ -90,16 +117,21 @@ function StepThree({ setStep, step }: { setStep: any; step: number }) {
   });
 
   useEffect(() => {
-    // Load existing bot data from localStorage
-    const savedData = JSON.parse(localStorage.getItem("bot") || "{}");
-    setBotData(savedData);
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off("connect");
+        socketRef.current.off("connect_error");
+        socketRef.current.off("disconnect");
+        socketRef.current.disconnect();
+      }
+    };
   }, []);
 
   const showWhatsAppField = ["whatsapp", "both"].includes(
-    botData.platform || "",
+    botData.platform || ""
   );
   const showTelegramField = ["telegram", "both"].includes(
-    botData.platform || "",
+    botData.platform || ""
   );
 
   const isValid = () => {
@@ -159,3 +191,4 @@ function StepThree({ setStep, step }: { setStep: any; step: number }) {
 }
 
 export default StepThree;
+

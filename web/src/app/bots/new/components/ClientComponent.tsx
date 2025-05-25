@@ -38,7 +38,7 @@ function ClientComponent() {
     {
       title: "Configure your bot's behavior",
       step: 3,
-      component: <StepThree step={currentStep} setStep={setCurrentStep} />,
+      component: <StepThree setBotId={setBotId} step={currentStep} setStep={setCurrentStep} />,
     },
     {
       title: "Confirm details",
