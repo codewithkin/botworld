@@ -1,15 +1,16 @@
-import { prisma } from '@/lib/auth';
+import { auth, prisma } from '@/lib/auth';
 import { sendNotificationEmail } from '@/lib/email/email';
+import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   try {
-    const { plan, userId } = await request.json();
+    const { plan } = await request.json();
 
     // Validate input
-    if (!plan || !userId) {
+    if (!plan) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Missing plan' },
         { status: 400 }
       );
     }
@@ -23,15 +24,15 @@ export async function POST(request: Request) {
       );
     }
 
+    // Get the user's data
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+
     // Update user's plan in database
     const updatedUser = await prisma.user.update({
-      where: { id: userId },
-      data: { plan },
-      select: {
-        email: true,
-        name: true,
-        plan: true
-      }
+      where: { id: session?.user.id },
+      data: { plan }
     });
 
     // Send confirmation email
