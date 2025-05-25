@@ -186,7 +186,7 @@ function UpgradePage() {
                                     {plan.buttonText}
                                 </Button>
                             ) : (
-                                <Link href={plan.url} className="w-full">
+                                <Link target="_blank" href={plan.url} className="w-full">
                                     <Button className={`w-full ${plan.buttonColor} ${plan.buttonTextColor} ${plan.buttonHoverColor} ${plan.buttonHoverTextColor} ${plan.buttonBorderColor} ${plan.buttonBorderWidth} ${plan.buttonBorderRadius}`}>
                                         {plan.buttonText}
                                     </Button>
