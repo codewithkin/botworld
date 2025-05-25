@@ -29,7 +29,7 @@ export const plans = {
       bots: 5,
       messages: 1000,
       price: 19,
-      url: `https://checkout.dodopayments.com/buy/{pdt_jyHkZubMXY3XIfSfrI1ec}?quantity=1&redirect_url={${process.env.BETTER_AUTH_URL}/upgrade/success?plan=lite}`,
+      url: `https://test.checkout.dodopayments.com/buy/pdt_jyHkZubMXY3XIfSfrI1ec?quantity=1&redirect_url={${process.env.BETTER_AUTH_URL}/upgrade/success?plan=lite}`,
       features: [
         "🚀 5 AI bots", 
         "💥 1,000 messages/month",
@@ -57,7 +57,7 @@ export const plans = {
       bots: 10,
       messages: 10000,
       price: 89,
-      url: `https://checkout.dodopayments.com/buy/{pdt_p5HKUcC8AvpISeVik0pGN}?quantity=1&redirect_url={${process.env.BETTER_AUTH_URL}/upgrade/success?plan=business}`,
+      url: `https://test.checkout.dodopayments.com/buy/pdt_p5HKUcC8AvpISeVik0pGN?quantity=1&redirect_url={${process.env.BETTER_AUTH_URL}/upgrade/success?plan=business}`,
       features: [
         "🌟 10 AI bots",
         "⚡ 10,000 messages/month", 
@@ -85,7 +85,7 @@ export const plans = {
       bots: Infinity,
       messages: Infinity,
       price: 200,
-      url: `https://checkout.dodopayments.com/buy/{pdt_qHH5L1TU7HhNPrBolxaxb}?quantity=1&redirect_url={${process.env.BETTER_AUTH_URL}/upgrade/success?plan=unlimited}`,
+      url: `https://test.checkout.dodopayments.com/buy/pdt_qHH5L1TU7HhNPrBolxaxb?quantity=1&redirect_url={${process.env.BETTER_AUTH_URL}/upgrade/success?plan=unlimited}`,
       features: [
         "🌈 Unlimited bots",
         "♾️ Unlimited messages",
