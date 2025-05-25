@@ -16,7 +16,7 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import NewBotFAB from "@/components/shared/NewBotFAB";
-import { plans } from "@/lib/plans/limitations";
+import { plans } from "@/lib/plans";
 import { toast } from "sonner";
 import { Icons } from "./components/icons";
 import { Loader, PlusCircleIcon } from "lucide-react";

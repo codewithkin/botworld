@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { plans } from "@/lib/plans/limitations";
+import { plans } from "@/lib/plans";
 import { DialogTitle } from "@radix-ui/react-dialog";
 
 function NewBotFAB() {
