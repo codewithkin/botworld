@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Verified, X, Building2, UserCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { queryClient } from '@/providers/QueryClientProviderWrapper';
 
 export function UserProfileCard({ user }: { user: any }) {
     const [name, setName] = useState(user?.name || '');
@@ -17,7 +18,7 @@ export function UserProfileCard({ user }: { user: any }) {
     const { mutate: updateName, isPending } = useMutation({
         mutationFn: async () => {
             const res = await fetch('/api/user/update-name', {
-                method: 'POST',
+                method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name }),
             });
@@ -25,7 +26,12 @@ export function UserProfileCard({ user }: { user: any }) {
             if (!res.ok) throw new Error('Failed to update name');
             return res.json();
         },
-        onSuccess: () => toast.success('Name updated successfully'),
+        onSuccess: () => {
+            // Invalidate query
+            queryClient.invalidateQueries({ queryKey: ['user-profile'] });
+
+            toast.success('Name updated successfully')
+        },
         onError: () => toast.error('Failed to update name'),
     });
 
@@ -127,3 +133,4 @@ export function UserProfileCard({ user }: { user: any }) {
         </Card>
     );
 }
+
