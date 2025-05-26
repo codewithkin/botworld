@@ -13,10 +13,11 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { Message } from "@/generated/prisma";
+import { Badge } from "@/components/ui/badge";
 
 export function MessagesTable() {
     const [page, setPage] = useState(1);
@@ -48,47 +49,58 @@ export function MessagesTable() {
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
-                        <TableRow>
-                            <TableHead>Bot</TableHead>
-                            <TableHead>Purpose</TableHead>
-                            <TableHead>Sender</TableHead>
-                            <TableHead>Content</TableHead>
-                            <TableHead>Date</TableHead>
-                            <TableHead>Status</TableHead>
+                        <TableRow className="bg-gray-200">
+                            <TableHead className="p-4 py-4 md:px-8">Bot</TableHead>
+                            <TableHead className="p-4 py-4 md:px-8">Purpose</TableHead>
+                            <TableHead className="p-4 py-4 md:px-8">Sender</TableHead>
+                            <TableHead className="p-4 py-4 md:px-8">Content</TableHead>
+                            <TableHead className="p-4 py-4 md:px-8">Date</TableHead>
+                            <TableHead className="p-4 py-4 md:px-8">Status</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {isLoading ? (
                             Array.from({ length: pageSize }).map((_, i) => (
                                 <TableRow key={i}>
-                                    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                                    <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
-                                    <TableCell><Skeleton className="h-4 w-[60px]" /></TableCell>
-                                    <TableCell><Skeleton className="h-4 w-[200px]" /></TableCell>
-                                    <TableCell><Skeleton className="h-4 w-[120px]" /></TableCell>
-                                    <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
+                                    <TableCell className="p-4 py-4 md:px-8"><Skeleton className="h-4 w-[100px]" /></TableCell>
+                                    <TableCell className="p-4 py-4 md:px-8"><Skeleton className="h-4 w-[80px]" /></TableCell>
+                                    <TableCell className="p-4 py-4 md:px-8"><Skeleton className="h-4 w-[60px]" /></TableCell>
+                                    <TableCell className="p-4 py-4 md:px-8"><Skeleton className="h-4 w-[200px]" /></TableCell>
+                                    <TableCell className="p-4 py-4 md:px-8"><Skeleton className="h-4 w-[120px]" /></TableCell>
+                                    <TableCell className="p-4 py-4 md:px-8"><Skeleton className="h-4 w-[80px]" /></TableCell>
                                 </TableRow>
                             ))
                         ) : (
                             data?.data?.map((message: any) => (
                                 <TableRow key={message.id}>
-                                    <TableCell className="font-medium">{message.bot?.name || '-'}</TableCell>
-                                    <TableCell>{message.bot?.purpose || '-'}</TableCell>
-                                    <TableCell className="capitalize">{message.sender}</TableCell>
-                                    <TableCell className="max-w-[200px] truncate">
+                                    <TableCell className="p-4 py-4 md:px-8 font-medium">{message.bot?.name || '-'}</TableCell>
+                                    <TableCell className="p-4 py-4 md:px-8">{message.bot?.purpose || '-'}</TableCell>
+                                    <TableCell className="p-4 py-4 md:px-8 capitalize">{message.sender}</TableCell>
+                                    <TableCell className="p-4 py-4 md:px-8 max-w-[200px] truncate">
                                         {message.contentSnippet}
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell className="p-4 py-4 md:px-8 flex items-center gap-2">
+                                        <Calendar className="h-4 w-4 text-gray-500" />
                                         {format(new Date(message.createdAt), 'MMM dd, yyyy HH:mm')}
                                     </TableCell>
-                                    <TableCell>
-                                        {message.fallback ? (
-                                            <span className="text-yellow-600">Fallback</span>
-                                        ) : message.reply ? (
-                                            <span className="text-green-600">Replied</span>
-                                        ) : (
-                                            <span className="text-gray-500">Received</span>
-                                        )}
+                                    <TableCell className="p-4 py-4 md:px-8">
+                                        <Badge
+                                            className={
+                                                message.fallback
+                                                    ? "bg-yellow-100 text-yellow-600"
+                                                    : message.reply
+                                                        ? "bg-green-100 text-green-600"
+                                                        : "bg-gray-100 text-gray-500"
+                                            }
+                                        >
+                                            {message.fallback ? (
+                                                <span>Fallback</span>
+                                            ) : message.reply ? (
+                                                <span>Replied</span>
+                                            ) : (
+                                                <span>Received</span>
+                                            )}
+                                        </Badge>
                                     </TableCell>
                                 </TableRow>
                             ))
