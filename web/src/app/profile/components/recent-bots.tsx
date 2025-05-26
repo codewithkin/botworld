@@ -41,7 +41,7 @@ export function RecentBots({ bots }: { bots: any[] }) {
                     </Table>
                 ) : (
                     <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
-                        <Bot className="h-8 w-8 mb-2" />
+                        <Bot className="h-8 w-8" />
                         <p>No bots created yet</p>
                     </div>
                 )}

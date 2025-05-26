@@ -21,16 +21,22 @@ export function UsageStats({
                         icon={<Bot className="h-6 w-6" />}
                         title="Bots"
                         value={botCount}
+                        containerClass="bg-primary/10 text-primary"
+                        iconClass="bg-primary/20 text-primary"
                     />
                     <StatCard
                         icon={<FileText className="h-6 w-6" />}
                         title="Documents"
                         value={documentCount}
+                        containerClass="bg-secondary text-secondary-foreground"
+                        iconClass="bg-secondary/70 text-secondary-foreground"
                     />
                     <StatCard
                         icon={<MessageSquare className="h-6 w-6" />}
                         title="Messages"
                         value={messageCount}
+                        containerClass="bg-orange-100 text-orange-600"
+                        iconClass="bg-orange-200 text-orange-600"
                     />
                 </div>
             </CardContent>
@@ -38,12 +44,24 @@ export function UsageStats({
     );
 }
 
-function StatCard({ icon, title, value }: { icon: React.ReactNode; title: string; value: number }) {
+function StatCard({
+    icon,
+    title,
+    value,
+    containerClass,
+    iconClass
+}: {
+    icon: React.ReactNode;
+    title: string;
+    value: number;
+    containerClass: string;
+    iconClass: string;
+}) {
     return (
-        <div className="flex items-center space-x-4 rounded-lg border p-4">
-            <div className="rounded-full bg-muted p-3">{icon}</div>
+        <div className={`flex items-center space-x-4 rounded-lg p-4 ${containerClass}`}>
+            <div className={`rounded-full p-3 ${iconClass}`}>{icon}</div>
             <div>
-                <p className="text-sm text-muted-foreground">{title}</p>
+                <p className="text-sm">{title}</p>
                 <p className="text-2xl font-semibold">{value}</p>
             </div>
         </div>
