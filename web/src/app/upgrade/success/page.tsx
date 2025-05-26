@@ -1,25 +1,43 @@
 "use client";
 
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useMutation } from '@tanstack/react-query';
-import { Loader2, CheckCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Suspense, useEffect } from 'react';
+import { useRouter, useSearchParams } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import { Loader2, CheckCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Suspense, useEffect } from "react";
+import { authClient } from "@/lib/auth-client";
 
-// Extracted the search params logic to a separate component
-function UpgradeSuccessContent() {
-    const router = useRouter();
-    const { mutate, isPending, isError, isSuccess } = useMutation({
-        mutationFn: upgradePlan,
-        onSuccess: () => {
-            // You might want to update user context here
+// --- Mutation function to call backend API ---
+async function upgradePlan({ plan, userId }: { plan: string; userId: string }) {
+    const response = await fetch("/api/upgrade", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
         },
-        onError: (error) => {
-            console.error('Upgrade error:', error);
-        },
+        body: JSON.stringify({ plan, userId }),
     });
 
-    // This will be rendered on the client side after hydration
+    if (!response.ok) {
+        throw new Error("Failed to upgrade plan");
+    }
+
+    return response.json();
+}
+
+// --- Success Content UI Handler ---
+function UpgradeSuccessContent({
+    isPending,
+    isError,
+    isSuccess,
+    retry,
+}: {
+    isPending: boolean;
+    isError: boolean;
+    isSuccess: boolean;
+    retry: () => void;
+}) {
+    const router = useRouter();
+
     return (
         <div className="flex flex-col items-center justify-center min-h-screen py-12 px-4">
             <div className="max-w-md w-full text-center">
@@ -54,7 +72,8 @@ function UpgradeSuccessContent() {
                         <p className="text-muted-foreground mb-6">
                             Something went wrong while processing your upgrade. Please try again.
                         </p>
-                        <Button onClick={() => router.push('/upgrade')}>
+                        <Button onClick={retry}>Try Again</Button>
+                        <Button variant="ghost" onClick={() => router.push("/upgrade")} className="mt-2">
                             Back to Plans
                         </Button>
                     </>
@@ -67,12 +86,9 @@ function UpgradeSuccessContent() {
                         </div>
                         <h1 className="text-2xl font-bold mb-2">Upgrade Successful!</h1>
                         <p className="text-muted-foreground mb-6">
-                            Your account has been successfully upgraded.
-                            You can now enjoy all the premium features.
+                            Your account has been successfully upgraded. You can now enjoy all the premium features.
                         </p>
-                        <Button onClick={() => router.push('/dashboard')}>
-                            Go to Dashboard
-                        </Button>
+                        <Button onClick={() => router.push("/dashboard")}>Go to Dashboard</Button>
                     </>
                 )}
             </div>
@@ -80,59 +96,65 @@ function UpgradeSuccessContent() {
     );
 }
 
-// Moved the mutation function outside the component
-async function upgradePlan({ plan, userId }: { plan: string; userId: string }) {
-    const response = await fetch('/api/upgrade', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ plan, userId }),
-    });
-
-    if (!response.ok) {
-        throw new Error('Failed to upgrade plan');
-    }
-
-    return response.json();
-}
-
-// Main page component with Suspense boundary
-export default function UpgradeSuccessPage() {
-    const userId = "user123"; // You'd typically get this from your auth context
-
-    return (
-        <Suspense fallback={
-            <div className="flex flex-col items-center justify-center min-h-screen py-12 px-4">
-                <Loader2 className="h-12 w-12 text-blue-500 animate-spin mx-auto mb-4" />
-                <p className="text-muted-foreground">Loading upgrade details...</p>
-            </div>
-        }>
-            <PlanUpgradeHandler userId={userId} />
-        </Suspense>
-    );
-}
-
-// Component that handles the search params and initiates the upgrade
+// --- Plan Upgrade Handler with search params ---
 function PlanUpgradeHandler({ userId }: { userId: string }) {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const plan = searchParams.get('plan');
+    const plan = searchParams.get("plan");
 
-    const { mutate } = useMutation({
+    const {
+        mutate,
+        isPending,
+        isError,
+        isSuccess,
+    } = useMutation({
         mutationFn: upgradePlan,
         onError: (error) => {
-            console.error('Upgrade error:', error);
+            console.error("Upgrade error:", error);
         },
     });
 
     useEffect(() => {
-        if (plan) {
+        if (plan && userId) {
             mutate({ plan, userId });
         } else {
-            router.push('/upgrade');
+            router.push("/upgrade");
         }
-    }, [plan, mutate, router]);
+    }, [plan, userId, mutate, router]);
 
-    return <UpgradeSuccessContent />;
+    return (
+        <UpgradeSuccessContent
+            isPending={isPending}
+            isError={isError}
+            isSuccess={isSuccess}
+            retry={() => plan && mutate({ plan, userId })}
+        />
+    );
+}
+
+// --- Main Export ---
+export default function UpgradeSuccessPage() {
+    const { data: session } = authClient.useSession();
+
+    return (
+        <Suspense
+            fallback={
+                <div className="flex flex-col items-center justify-center min-h-screen py-12 px-4">
+                    <Loader2 className="h-12 w-12 text-blue-500 animate-spin mx-auto mb-4" />
+                    <p className="text-muted-foreground">Loading upgrade details...</p>
+                </div>
+            }
+        >
+            {session?.user?.id ? (
+                <PlanUpgradeHandler userId={session.user.id} />
+            ) : (
+                <div className="flex flex-col items-center justify-center min-h-screen py-12 px-4 text-center">
+                    <p className="text-muted-foreground">You must be logged in to view this page.</p>
+                    <Button className="mt-4" onClick={() => window.location.href = "/login"}>
+                        Go to Login
+                    </Button>
+                </div>
+            )}
+        </Suspense>
+    );
 }

@@ -1,4 +1,7 @@
-import { Check, Crown, Zap } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import { Check } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,6 +9,29 @@ import { Badge } from "@/components/ui/badge";
 import { plans } from "@/lib/plans";
 
 function UpgradePage() {
+    const [loadingProduct, setLoadingProduct] = useState<string | null>(null);
+
+    const handleSubscribe = async (productId: string) => {
+        setLoadingProduct(productId);
+        try {
+            const res = await fetch("/api/checkout", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ productId }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                throw new Error(data.error || "Failed to create checkout session");
+            }
+            // Redirect the user to the Creem checkout session
+            window.location.href = data.url;
+        } catch (error) {
+            console.error("Checkout error", error);
+        } finally {
+            setLoadingProduct(null);
+        }
+    };
+
     return (
         <div className="container mx-auto px-4 py-12">
             <div className="text-center mb-16">
@@ -19,15 +45,15 @@ function UpgradePage() {
                 {Object.entries(plans).map(([key, plan]) => (
                     <Card
                         key={key}
-                        className={`relative ${key === 'free' ? 'ring-2 ring-blue-500' : ''} ${key === 'lite' ? 'border-2 border-green-500' : ''
+                        className={`relative ${key === "free" ? "ring-2 ring-blue-500" : ""} ${key === "lite" ? "border-2 border-green-500" : ""
                             }`}
                     >
-                        {key === 'lite' && (
+                        {key === "lite" && (
                             <div className="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-3 py-1 transform rotate-12 translate-x-2 -translate-y-1">
                                 POPULAR
                             </div>
                         )}
-                        {key === 'business' && (
+                        {key === "business" && (
                             <div className="absolute top-0 right-0 bg-purple-600 text-white text-xs font-bold px-3 py-1 transform rotate-12 translate-x-2 -translate-y-1">
                                 BEST VALUE
                             </div>
@@ -37,7 +63,7 @@ function UpgradePage() {
                             <div className="flex justify-between items-start">
                                 <CardTitle className="text-2xl">
                                     {plan.name}
-                                    {key === 'free' && (
+                                    {key === "free" && (
                                         <span className="ml-2 text-sm font-normal bg-blue-100 text-blue-800 px-2 py-1 rounded">
                                             Your Current Plan
                                         </span>
@@ -55,7 +81,7 @@ function UpgradePage() {
                         <CardContent>
                             <div className="mb-6">
                                 <span className="text-4xl font-bold">${plan.price}</span>
-                                <span className="text-muted-foreground">/{plan.price === 0 ? 'forever' : 'month'}</span>
+                                <span className="text-muted-foreground">/{plan.price === 0 ? "forever" : "month"}</span>
                             </div>
 
                             <ul className="space-y-3">
@@ -69,16 +95,18 @@ function UpgradePage() {
                         </CardContent>
 
                         <CardFooter>
-                            {key === 'free' ? (
+                            {key === "free" ? (
                                 <Button className="w-full" variant="outline" disabled>
                                     {plan.buttonText}
                                 </Button>
                             ) : (
-                                <Link target="_blank" href={plan.url} className="w-full">
-                                    <Button className={`w-full ${plan.buttonColor} ${plan.buttonTextColor} ${plan.buttonHoverColor} ${plan.buttonHoverTextColor} ${plan.buttonBorderColor} ${plan.buttonBorderWidth} ${plan.buttonBorderRadius}`}>
-                                        {plan.buttonText}
-                                    </Button>
-                                </Link>
+                                <Button
+                                    onClick={() => handleSubscribe(plan.productId)}
+                                    className={`w-full ${plan.buttonColor} ${plan.buttonTextColor} ${plan.buttonHoverColor} ${plan.buttonHoverTextColor} ${plan.buttonBorderColor} ${plan.buttonBorderWidth} ${plan.buttonBorderRadius}`}
+                                    disabled={loadingProduct === plan.productId}
+                                >
+                                    {loadingProduct === plan.productId ? "Processing..." : plan.buttonText}
+                                </Button>
                             )}
                         </CardFooter>
                     </Card>
@@ -90,16 +118,20 @@ function UpgradePage() {
                 <div className="max-w-3xl mx-auto space-y-4">
                     <div className="border-b pb-4">
                         <h3 className="font-medium">Can I change plans later?</h3>
-                        <p className="text-muted-foreground text-sm">Yes, you can upgrade or downgrade at any time.</p>
+                        <p className="text-muted-foreground text-sm">
+                            Yes, you can upgrade or downgrade at any time.
+                        </p>
                     </div>
                     <div className="border-b pb-4">
                         <h3 className="font-medium">What payment methods do you accept?</h3>
-                        <p className="text-muted-foreground text-sm">We accept all major credit cards and PayPal.</p>
+                        <p className="text-muted-foreground text-sm">
+                            We accept all major credit cards and PayPal.
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
-export default UpgradePage
+export default UpgradePage;

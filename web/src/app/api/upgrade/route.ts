@@ -5,12 +5,12 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   try {
-    const { plan } = await request.json();
+    const { plan, userId } = await request.json();
 
     // Validate input
-    if (!plan) {
+    if (!plan || !userId) {
       return NextResponse.json(
-        { error: 'Missing plan' },
+        { error: 'Missing plan or user ID' },
         { status: 400 }
       );
     }
@@ -24,14 +24,22 @@ export async function POST(request: Request) {
       );
     }
 
-    // Get the user's data
+    // Get the current session (to verify that the authenticated user matches)
     const session = await auth.api.getSession({
-        headers: await headers()
-    })
+      headers: await headers()
+    });
 
-    // Update user's plan in database
+    // Optional: validate that the userId matches the logged-in session user
+    if (session?.user.id !== userId) {
+      return NextResponse.json(
+        { error: 'Unauthorized to upgrade this user' },
+        { status: 403 }
+      );
+    }
+
+    // Update user's plan in the database
     const updatedUser = await prisma.user.update({
-      where: { id: session?.user.id },
+      where: { id: userId },
       data: { plan }
     });
 
@@ -63,8 +71,7 @@ export async function POST(request: Request) {
 
     if (emailResult.error) {
       console.error('Failed to send confirmation email:', emailResult.error);
-      // We'll still return success since the plan was updated
-      // but log the email failure
+      // Still return success since plan was updated
     }
 
     return NextResponse.json(
@@ -81,8 +88,7 @@ export async function POST(request: Request) {
 
   } catch (error) {
     console.error('Upgrade error:', error);
-    
-    // Handle Prisma errors specifically
+
     if (error instanceof Error && error.message.includes('RecordNotFound')) {
       return NextResponse.json(
         { error: 'User not found' },

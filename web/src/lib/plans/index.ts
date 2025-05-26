@@ -3,7 +3,7 @@ export const plans = {
       bots: 1,
       messages: 100,
       price: 0,
-      url: "/upgrade",
+      productId: "prod_3LNHH2Is2Pkk7KQgpm0wIy",
       features: [
         `🤖 1 AI bot`,
         "💬 100 messages/month",
@@ -29,7 +29,7 @@ export const plans = {
       bots: 5,
       messages: 1000,
       price: 19,
-      url: `https://test.checkout.dodopayments.com/buy/pdt_jyHkZubMXY3XIfSfrI1ec?quantity=1&redirect_url=${process.env.BETTER_AUTH_URL}/upgrade/success?plan=lite`,
+      productId: "",
       features: [
         "🚀 5 AI bots", 
         "💥 1,000 messages/month",
@@ -57,7 +57,7 @@ export const plans = {
       bots: 10,
       messages: 10000,
       price: 89,
-      url: `https://test.checkout.dodopayments.com/buy/pdt_p5HKUcC8AvpISeVik0pGN?quantity=1&redirect_url=${process.env.BETTER_AUTH_URL}/upgrade/success?plan=business`,
+      productId: "prod_4JSusrL2XiVARq9hMLGQeq",
       features: [
         "🌟 10 AI bots",
         "⚡ 10,000 messages/month", 
@@ -85,7 +85,7 @@ export const plans = {
       bots: Infinity,
       messages: Infinity,
       price: 200,
-      url: `https://test.checkout.dodopayments.com/buy/pdt_qHH5L1TU7HhNPrBolxaxb?quantity=1&redirect_url=${process.env.BETTER_AUTH_URL}/upgrade/success?plan=unlimited`,
+      productId: "prod_3dbgjMwLS3TmxTjSTxrWVn",
       features: [
         "🌈 Unlimited bots",
         "♾️ Unlimited messages",
