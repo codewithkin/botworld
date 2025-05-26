@@ -6,24 +6,46 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Clock10, Bot, FileText, MessageCircle } from "lucide-react";
-import { MessagesOverTime } from "./messages/MessagesOverTime";
+import dynamic from "next/dynamic";
+
+// Dynamically import MessagesOverTime with no SSR and a loading fallback
+const MessagesOverTime = dynamic(
+  () =>
+    import("./messages/MessagesOverTime").then((mod) => mod.MessagesOverTime),
+  {
+    ssr: false,
+    loading: () => (
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg">Messages Over Time</CardTitle>
+          <CardDescription>Loading chart...</CardDescription>
+        </CardHeader>
+        <CardContent className="h-[350px] flex items-center justify-center">
+          <div className="animate-pulse">Loading message data...</div>
+        </CardContent>
+      </Card>
+    ),
+  }
+);
 
 function ClientComponent() {
-  // Fetch the user's data
+  // Fetch only the necessary data for metrics
   const { data, isLoading: gettingUserData } = useQuery({
-    queryKey: ["data"],
+    queryKey: ["dashboard-metrics"],
     queryFn: async () => {
       const res = await axios.get("/api/data");
       return res.data.data;
     },
   });
 
-  // Show loading skeletons while fetching
+  console.log("Dashboard data: ", data);
+
   if (gettingUserData) {
     return (
       <section>
@@ -42,7 +64,6 @@ function ClientComponent() {
     );
   }
 
-  // Construct card metrics from data
   const metrics = [
     {
       title: "Time Saved",
@@ -84,13 +105,11 @@ function ClientComponent() {
                 {metric.icon}
                 <h4>{metric.title}</h4>
               </CardHeader>
-
               <article className="flex flex-col px-6 pt-6">
                 <h3 className="text-2xl font-semibold">
                   {metric.value} {metric.unit}
                 </h3>
               </article>
-
               <CardFooter className="pt-2">
                 <CardDescription className="text-sm">
                   {metric.description}
@@ -101,8 +120,12 @@ function ClientComponent() {
         ))}
       </article>
 
-      {/* Messages over time */}
-      <MessagesOverTime messages={data.messages} />
+      {/* Messages over time - pass params as needed */}
+      <MessagesOverTime
+        messages={data.messages}
+        bots={data.bots}
+        documents={data.documents}
+      />
     </section>
   );
 }
