@@ -3,7 +3,7 @@ export const plans = {
       bots: 1,
       messages: 100,
       price: 0,
-      productId: "prod_3LNHH2Is2Pkk7KQgpm0wIy",
+      productId: process.env.NODE_ENV === "production" ? "prod_7dlxu9H0z4nycn581YDH76" : "prod_3LNHH2Is2Pkk7KQgpm0wIy",
       features: [
         `🤖 1 AI bot`,
         "💬 100 messages/month",
@@ -57,7 +57,7 @@ export const plans = {
       bots: 10,
       messages: 10000,
       price: 89,
-      productId: "prod_4JSusrL2XiVARq9hMLGQeq",
+      productId: process.env.NODE_ENV === "production" ? "prod_5MmBhFeoV8ux1Ajt2GmRCK"  : "prod_4JSusrL2XiVARq9hMLGQeq",
       features: [
         "🌟 10 AI bots",
         "⚡ 10,000 messages/month", 
@@ -85,7 +85,7 @@ export const plans = {
       bots: Infinity,
       messages: Infinity,
       price: 200,
-      productId: "prod_3dbgjMwLS3TmxTjSTxrWVn",
+      productId: process.env.NODE_ENV === "production" ? "prod_9xdh9XQ1PHwcNVmYfZazj" : "prod_3dbgjMwLS3TmxTjSTxrWVn",
       features: [
         "🌈 Unlimited bots",
         "♾️ Unlimited messages",
