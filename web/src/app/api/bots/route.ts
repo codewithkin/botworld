@@ -112,7 +112,7 @@ export async function POST(request: Request) {
   - Never claim abilities you don't have
   - Admit when you don't know something`,
     description: `AI assistant specializing in ${purpose} but capable of general conversation`,
-    model: "o4-mini",
+    model: "gpt-4-turbo",
   });
     // Create bot in database
     const newBot = await prisma.bot.create({
