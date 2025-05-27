@@ -3,6 +3,7 @@ const qrcode = require("qrcode");
 const db = require("./lib/sqlite");
 const {OpenAI} = require("openai");
 const axios = require("axios");
+const {prisma} = require("./lib/prisma.js");
 
 require("dotenv").config();
 
@@ -111,9 +112,13 @@ async function createWhatsAppClient(botId, socket) {
       // Cache implementation can be added later if needed
       // For now, we'll skip caching to keep it simple
 
-
       const assistantId = await db.getBotConfig(botId, "assistantId");
-      console.log("Getting assistant id for bot: " + botId + "Assistant id: " + assistantId);
+      console.log(
+        "Getting assistant id for bot: " +
+          botId +
+          "Assistant id: " +
+          assistantId
+      );
       if (!assistantId) return;
 
       console.log("Passed all checks...replying");
@@ -145,18 +150,30 @@ async function createWhatsAppClient(botId, socket) {
         await msg.reply(assistantMessage);
 
         const userId = await db.getBotConfig(botId, "userId");
-        const messageData = {
-          botId,
-          userId,
-          sender: msg.from,
-          contentSnippet: msg.body.slice(0, 300),
-          reply: assistantMessage,
-          fallback: false,
-        };
 
-        axios
-          .post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/messages`, messageData)
-          .catch((error) => console.error("Failed to save message:", error));
+        try {
+          const newMessage = await prisma.message.create({
+            data: {
+              botId: botId,
+              userId: userId,
+              sender: msg.from,
+              contentSnippet: msg.body.slice(0, 300),
+              reply: assistantMessage,
+              fallback: false,
+            },
+          });
+
+          console.log("Message saved successfully:", newMessage.id);
+        } catch (error) {
+          console.error("Failed to save message:", {
+            error: error.message,
+            // Include more details if it's a Prisma error
+            ...(error instanceof Prisma.PrismaClientKnownRequestError && {
+              code: error.code,
+              meta: error.meta,
+            }),
+          });
+        }
       }
     } catch (error) {
       console.error(`Message handling error for bot ${botId}:`, error);
