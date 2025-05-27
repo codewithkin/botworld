@@ -167,11 +167,6 @@ async function createWhatsAppClient(botId, socket) {
         } catch (error) {
           console.error("Failed to save message:", {
             error: error.message,
-            // Include more details if it's a Prisma error
-            ...(error instanceof Prisma.PrismaClientKnownRequestError && {
-              code: error.code,
-              meta: error.meta,
-            }),
           });
         }
       }
