@@ -19,9 +19,13 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import Link from "next/link";
 import { Separator } from "@radix-ui/react-separator";
+import { useRouter } from "next/navigation";
+import { Button } from "../ui/button";
 
 function AppSideBar() {
   const { data, isPending } = authClient.useSession();
+
+  const router = useRouter();
 
   const primaryLinks = [
     {
@@ -61,11 +65,6 @@ function AppSideBar() {
 
   const footerLinks = [
     {
-      name: "Logout",
-      slug: "/logout",
-      icon: <DoorOpen size={18} />,
-    },
-    {
       name: "Billing",
       slug: "/billing",
       icon: <BanknoteArrowUp size={18} />,
@@ -86,7 +85,7 @@ function AppSideBar() {
             <Link
               key={link.slug}
               href={link.slug}
-              className="flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-200  hover:border hover:border-primary hover:font-semibold hover:text-primary transition"
+              className="flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-200 hover:border hover:border-primary hover:font-semibold hover:text-primary transition"
             >
               {link.icon}
               <span>{link.name}</span>
@@ -97,12 +96,11 @@ function AppSideBar() {
         {/* Secondary */}
         <SidebarGroup>
           <SidebarGroupLabel>General</SidebarGroupLabel>
-
           {secondaryLinks.map((link) => (
             <Link
               key={link.slug}
               href={link.slug}
-              className="flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-200  hover:border hover:border-primary hover:font-semibold hover:text-primary transition"
+              className="flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-200 hover:border hover:border-primary hover:font-semibold hover:text-primary transition"
             >
               {link.icon}
               <span>{link.name}</span>
@@ -118,12 +116,27 @@ function AppSideBar() {
           <Link
             key={link.slug}
             href={link.slug}
-            className="flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-200  hover:border hover:border-primary hover:font-semibold hover:text-primary transition"
+            className="flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-200 hover:border hover:border-primary hover:font-semibold hover:text-primary transition"
           >
             {link.icon}
             <span>{link.name}</span>
           </Link>
         ))}
+        <Button
+          onClick={async () => {
+            await authClient.signOut({
+              fetchOptions: {
+                onSuccess: () => {
+                  router.push("/auth");
+                },
+              },
+            });
+          }}
+          variant="destructive"
+        >
+          <DoorOpen size={18} />
+          <span>Logout</span>
+        </Button>
       </SidebarFooter>
     </Sidebar>
   );
