@@ -67,8 +67,8 @@ function ClientComponent() {
   const metrics = [
     {
       title: "Time Saved",
-      value: data.messages.length * 5,
-      unit: "hrs",
+      value: data.messages.length * 0.5,
+      unit: "mins",
       description: `All the time you've saved by using Botworld instead of replying to every DM yourself.`,
       icon: <Clock10 />,
     },
