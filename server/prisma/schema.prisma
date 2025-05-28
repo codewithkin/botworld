@@ -21,9 +21,10 @@ model User {
 
   bots      Bot[]
   documents Document[]
-  messages Message[]
-  sessions      Session[]
-  accounts      Account[]
+  messages  Message[]
+  sessions  Session[]
+  accounts  Account[]
+  chats     Chat[]
 
   @@unique([email])
   @@map("user")
@@ -74,27 +75,24 @@ model Verification {
   @@map("verification")
 }
 
-
 model Bot {
   id          String     @id @default(uuid())
   name        String
   purpose     String
 
-   assistantId String?  @map("assistant_id")
+  assistantId String?  @map("assistant_id")
 
-
-  whatsapp_number      String?
-  telegram_username   String?
-  telegram_number     String?
-  phoneNumber String 
-
+  whatsapp_number    String?
+  telegram_username  String?
+  telegram_number    String?
+  phoneNumber        String
 
   user        User       @relation(fields: [userId], references: [id])
   userId      String
 
-
   documents   Document[]
   messages    Message[]
+  chats       Chat[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 }
@@ -116,9 +114,26 @@ model Message {
   botId          String
   user           User     @relation(fields: [userId], references: [id])
   userId         String
+  chat           Chat     @relation(fields: [chatId], references: [id])
+  chatId         String
   sender         String  
   contentSnippet String
   fallback       Boolean  
-  reply           String?
+  reply          String?
   createdAt      DateTime @default(now())
+}
+
+model Chat {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  threadId    String
+  user        User     @relation(fields: [userId], references: [id])
+  from        String
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  messages    Message[]
+  bots        Bot[]
 }

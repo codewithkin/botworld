@@ -194,11 +194,23 @@ exports.Prisma.MessageScalarFieldEnum = {
   id: 'id',
   botId: 'botId',
   userId: 'userId',
+  chatId: 'chatId',
   sender: 'sender',
   contentSnippet: 'contentSnippet',
   fallback: 'fallback',
   reply: 'reply',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.ChatScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  threadId: 'threadId',
+  from: 'from',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -224,7 +236,8 @@ exports.Prisma.ModelName = {
   Verification: 'Verification',
   Bot: 'Bot',
   Document: 'Document',
-  Message: 'Message'
+  Message: 'Message',
+  Chat: 'Chat'
 };
 
 /**
