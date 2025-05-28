@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  output   = "./generated/prisma"
 }
 
 datasource db {
@@ -9,7 +9,7 @@ datasource db {
 }
 
 model User {
-  id            String   @id
+  id            String    @id
   name          String
   email         String
   emailVerified Boolean
@@ -17,7 +17,7 @@ model User {
   createdAt     DateTime
   updatedAt     DateTime
 
-  plan String @default("free")
+  plan      String @default("free")
 
   bots      Bot[]
   documents Document[]
@@ -76,31 +76,31 @@ model Verification {
 }
 
 model Bot {
-  id      String @id @default(uuid())
-  name    String
-  purpose String
+  id          String     @id @default(uuid())
+  name        String
+  purpose     String
 
-  assistantId String? @map("assistant_id")
+  assistantId String?  @map("assistant_id")
 
-  whatsapp_number   String?
-  telegram_username String?
-  telegram_number   String?
-  phoneNumber       String
+  whatsapp_number    String?
+  telegram_username  String?
+  telegram_number    String?
+  phoneNumber        String
 
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
+  user        User       @relation(fields: [userId], references: [id])
+  userId      String
 
-  documents Document[]
-  messages  Message[]
-  chats     Chat[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  documents   Document[]
+  messages    Message[]
+  chats       Chat[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model Document {
   id        String   @id @default(uuid())
   name      String
-  url       String
+  url       String  
   bot       Bot      @relation(fields: [botId], references: [id])
   botId     String
   user      User     @relation(fields: [userId], references: [id])
@@ -114,11 +114,11 @@ model Message {
   botId          String
   user           User     @relation(fields: [userId], references: [id])
   userId         String
-  chat           Chat?    @relation(fields: [chatId], references: [id])
+  chat           Chat?     @relation(fields: [chatId], references: [id])
   chatId         String?
-  sender         String
+  sender         String  
   contentSnippet String
-  fallback       Boolean
+  fallback       Boolean  
   reply          String?
   createdAt      DateTime @default(now())
 }
@@ -134,6 +134,6 @@ model Chat {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  messages Message[]
-  bots     Bot[]
+  messages    Message[]
+  bots        Bot[]
 }

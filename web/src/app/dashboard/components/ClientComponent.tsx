@@ -20,6 +20,7 @@ const MessagesOverTime = dynamic(
     import("./messages/MessagesOverTime").then((mod) => mod.MessagesOverTime),
   {
     ssr: false,
+
     loading: () => (
       <Card>
         <CardHeader className="pb-2">

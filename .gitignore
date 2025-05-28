@@ -8,6 +8,8 @@ pids
 *.seed
 *.pid.lock
 
+/prisma/migrations
+
 /server/.wwebjs_auth
 /server/.wwebjs_cache
 /server/sessions

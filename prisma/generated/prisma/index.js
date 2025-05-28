@@ -223,7 +223,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/codewithkin/Desktop/projects/s/web/src/generated/prisma",
+      "value": "/home/codewithkin/Desktop/projects/botworld/prisma/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -237,20 +237,20 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/codewithkin/Desktop/projects/s/web/prisma/schema.prisma",
+    "sourceFilePath": "/home/codewithkin/Desktop/projects/botworld/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../../.env"
+    "rootEnvPath": null
   },
-  "relativePath": "../../../prisma",
+  "relativePath": "../..",
   "clientVersion": "6.8.2",
   "engineVersion": "2060c79ba17c6bb9f5823312b6f6b7f4a845738e",
   "datasourceNames": [
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -259,8 +259,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id            String   @id\n  name          String\n  email         String\n  emailVerified Boolean\n  image         String?\n  createdAt     DateTime\n  updatedAt     DateTime\n\n  plan String @default(\"free\")\n\n  bots      Bot[]\n  documents Document[]\n  messages  Message[]\n  sessions  Session[]\n  accounts  Account[]\n  chats     Chat[]\n\n  @@unique([email])\n  @@map(\"user\")\n}\n\nmodel Session {\n  id        String   @id\n  expiresAt DateTime\n  token     String\n  createdAt DateTime\n  updatedAt DateTime\n  ipAddress String?\n  userAgent String?\n  userId    String\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([token])\n  @@map(\"session\")\n}\n\nmodel Account {\n  id                    String    @id\n  accountId             String\n  providerId            String\n  userId                String\n  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)\n  accessToken           String?\n  refreshToken          String?\n  idToken               String?\n  accessTokenExpiresAt  DateTime?\n  refreshTokenExpiresAt DateTime?\n  scope                 String?\n  password              String?\n  createdAt             DateTime\n  updatedAt             DateTime\n\n  @@map(\"account\")\n}\n\nmodel Verification {\n  id         String    @id\n  identifier String\n  value      String\n  expiresAt  DateTime\n  createdAt  DateTime?\n  updatedAt  DateTime?\n\n  @@map(\"verification\")\n}\n\nmodel Bot {\n  id      String @id @default(uuid())\n  name    String\n  purpose String\n\n  assistantId String? @map(\"assistant_id\")\n\n  whatsapp_number   String?\n  telegram_username String?\n  telegram_number   String?\n  phoneNumber       String\n\n  user   User   @relation(fields: [userId], references: [id])\n  userId String\n\n  documents Document[]\n  messages  Message[]\n  chats     Chat[]\n  createdAt DateTime   @default(now())\n  updatedAt DateTime   @updatedAt\n}\n\nmodel Document {\n  id        String   @id @default(uuid())\n  name      String\n  url       String\n  bot       Bot      @relation(fields: [botId], references: [id])\n  botId     String\n  user      User     @relation(fields: [userId], references: [id])\n  userId    String\n  createdAt DateTime @default(now())\n}\n\nmodel Message {\n  id             String   @id @default(uuid())\n  bot            Bot      @relation(fields: [botId], references: [id])\n  botId          String\n  user           User     @relation(fields: [userId], references: [id])\n  userId         String\n  chat           Chat?    @relation(fields: [chatId], references: [id])\n  chatId         String?\n  sender         String\n  contentSnippet String\n  fallback       Boolean\n  reply          String?\n  createdAt      DateTime @default(now())\n}\n\nmodel Chat {\n  id          String   @id @default(uuid())\n  name        String\n  description String?\n  threadId    String\n  user        User     @relation(fields: [userId], references: [id])\n  from        String\n  userId      String\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  messages Message[]\n  bots     Bot[]\n}\n",
-  "inlineSchemaHash": "7f0c6f35ea4bd37974f6cf67a28b5200fdaf5c97f53aa18e734156de039166d2",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id            String   @id\n  name          String\n  email         String\n  emailVerified Boolean\n  image         String?\n  createdAt     DateTime\n  updatedAt     DateTime\n\n  plan String @default(\"free\")\n\n  bots      Bot[]\n  documents Document[]\n  messages  Message[]\n  sessions  Session[]\n  accounts  Account[]\n  chats     Chat[]\n\n  @@unique([email])\n  @@map(\"user\")\n}\n\nmodel Session {\n  id        String   @id\n  expiresAt DateTime\n  token     String\n  createdAt DateTime\n  updatedAt DateTime\n  ipAddress String?\n  userAgent String?\n  userId    String\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@unique([token])\n  @@map(\"session\")\n}\n\nmodel Account {\n  id                    String    @id\n  accountId             String\n  providerId            String\n  userId                String\n  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)\n  accessToken           String?\n  refreshToken          String?\n  idToken               String?\n  accessTokenExpiresAt  DateTime?\n  refreshTokenExpiresAt DateTime?\n  scope                 String?\n  password              String?\n  createdAt             DateTime\n  updatedAt             DateTime\n\n  @@map(\"account\")\n}\n\nmodel Verification {\n  id         String    @id\n  identifier String\n  value      String\n  expiresAt  DateTime\n  createdAt  DateTime?\n  updatedAt  DateTime?\n\n  @@map(\"verification\")\n}\n\nmodel Bot {\n  id      String @id @default(uuid())\n  name    String\n  purpose String\n\n  assistantId String? @map(\"assistant_id\")\n\n  whatsapp_number   String?\n  telegram_username String?\n  telegram_number   String?\n  phoneNumber       String\n\n  user   User   @relation(fields: [userId], references: [id])\n  userId String\n\n  documents Document[]\n  messages  Message[]\n  chats     Chat[]\n  createdAt DateTime   @default(now())\n  updatedAt DateTime   @updatedAt\n}\n\nmodel Document {\n  id        String   @id @default(uuid())\n  name      String\n  url       String\n  bot       Bot      @relation(fields: [botId], references: [id])\n  botId     String\n  user      User     @relation(fields: [userId], references: [id])\n  userId    String\n  createdAt DateTime @default(now())\n}\n\nmodel Message {\n  id             String   @id @default(uuid())\n  bot            Bot      @relation(fields: [botId], references: [id])\n  botId          String\n  user           User     @relation(fields: [userId], references: [id])\n  userId         String\n  chat           Chat?    @relation(fields: [chatId], references: [id])\n  chatId         String?\n  sender         String\n  contentSnippet String\n  fallback       Boolean\n  reply          String?\n  createdAt      DateTime @default(now())\n}\n\nmodel Chat {\n  id          String   @id @default(uuid())\n  name        String\n  description String?\n  threadId    String\n  user        User     @relation(fields: [userId], references: [id])\n  from        String\n  userId      String\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  messages Message[]\n  bots     Bot[]\n}\n",
+  "inlineSchemaHash": "1b67f417d278522c729e03b47697c28d77c5d4e462c115b59de583a4205db0d5",
   "copyEngine": true
 }
 
@@ -269,7 +269,7 @@ const fs = require('fs')
 config.dirname = __dirname
 if (!fs.existsSync(path.join(__dirname, 'schema.prisma'))) {
   const alternativePaths = [
-    "src/generated/prisma",
+    "prisma/generated/prisma",
     "generated/prisma",
   ]
   
@@ -300,7 +300,7 @@ Object.assign(exports, Prisma)
 
 // file annotations for bundling tools to include these files
 path.join(__dirname, "libquery_engine-debian-openssl-3.0.x.so.node");
-path.join(process.cwd(), "src/generated/prisma/libquery_engine-debian-openssl-3.0.x.so.node")
+path.join(process.cwd(), "prisma/generated/prisma/libquery_engine-debian-openssl-3.0.x.so.node")
 // file annotations for bundling tools to include these files
 path.join(__dirname, "schema.prisma");
-path.join(process.cwd(), "src/generated/prisma/schema.prisma")
+path.join(process.cwd(), "prisma/generated/prisma/schema.prisma")
