@@ -95,84 +95,116 @@ async function createWhatsAppClient(botId, socket) {
   client.on("message", async (msg) => {
     try {
       const chat = await msg.getChat();
+      console.log("Received message from:", msg.from, "Content:", msg.body);
 
-      console.log("We just received a message:", msg.body);
-
-      if (chat.isReadOnly) {
-        return;
-      }
-
-      console.log("Message is not read only");
-
-      if (chat.isGroup) return;
-      if (msg.fromMe || !msg.body) return;
-
-      console.log("Passed all checks for chat");
-
-      // Cache implementation can be added later if needed
-      // For now, we'll skip caching to keep it simple
+      if (chat.isReadOnly || chat.isGroup || msg.fromMe || !msg.body) return;
 
       const assistantId = await db.getBotConfig(botId, "assistantId");
-      console.log(
-        "Getting assistant id for bot: " +
-          botId +
-          "Assistant id: " +
-          assistantId
-      );
       if (!assistantId) return;
 
-      console.log("Passed all checks...replying");
-
-      const thread = await openai.beta.threads.create();
-      await openai.beta.threads.messages.create(thread.id, {
-        role: "user",
-        content: `Message from ${msg.from}: ${msg.body}`,
+      // Get or create chat thread
+      const existingChat = await prisma.chat.findFirst({
+        where: {
+          from: msg.from,
+          bots: {some: {id: botId}},
+        },
+        include: {messages: {orderBy: {createdAt: "asc"}, take: 20}},
       });
 
-      const run = await openai.beta.threads.runs.create(thread.id, {
+      let threadId;
+      if (existingChat) {
+        threadId = existingChat.threadId;
+        console.log("Using existing chat thread:", threadId);
+      } else {
+        // Create new chat and thread
+        const newThread = await openai.beta.threads.create();
+        threadId = newThread.id;
+
+        await prisma.chat.create({
+          data: {
+            name: `Chat with ${msg.from}`,
+            from: msg.from,
+            threadId: threadId,
+            userId: await db.getBotConfig(botId, "userId"),
+            bots: {connect: {id: botId}},
+          },
+        });
+        console.log("Created new chat with thread:", threadId);
+      }
+
+      // Add user message to OpenAI thread
+      await openai.beta.threads.messages.create(threadId, {
+        role: "user",
+        content: msg.body,
+      });
+
+      // Execute assistant
+      const run = await openai.beta.threads.runs.create(threadId, {
         assistant_id: assistantId,
       });
 
-      let runStatus = await openai.beta.threads.runs.retrieve(
-        thread.id,
-        run.id
-      );
-      while (runStatus.status !== "completed") {
+      // Wait for completion
+      let runStatus;
+      do {
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
-      }
+        runStatus = await openai.beta.threads.runs.retrieve(threadId, run.id);
+      } while (runStatus.status !== "completed");
 
-      const messages = await openai.beta.threads.messages.list(thread.id);
+      // Get assistant response
+      const messages = await openai.beta.threads.messages.list(threadId);
       const assistantMessage = messages.data.find((m) => m.role === "assistant")
         ?.content[0]?.text?.value;
 
       if (assistantMessage) {
+        // Send response
         await msg.reply(assistantMessage);
 
-        const userId = await db.getBotConfig(botId, "userId");
+        // Add assistant response to OpenAI thread
+        await openai.beta.threads.messages.create(threadId, {
+          role: "assistant",
+          content: assistantMessage,
+        });
 
-        try {
-          const newMessage = await prisma.message.create({
-            data: {
-              botId: botId,
-              userId: userId,
+        // Save both messages to database
+        const chatRecord = await prisma.chat.findFirstOrThrow({
+          where: {threadId},
+        });
+
+        await prisma.message.createMany({
+          data: [
+            {
+              botId,
+              userId: chatRecord.userId,
+              chatId: chatRecord.id,
               sender: msg.from,
               contentSnippet: msg.body.slice(0, 300),
+              reply: null,
+              fallback: false,
+            },
+            {
+              botId,
+              userId: chatRecord.userId,
+              chatId: chatRecord.id,
+              sender: botId, // Using botId as sender for AI messages
+              contentSnippet: assistantMessage.slice(0, 300),
               reply: assistantMessage,
               fallback: false,
             },
-          });
+          ],
+        });
 
-          console.log("Message saved successfully:", newMessage.id);
-        } catch (error) {
-          console.error("Failed to save message:", {
-            error: error.message,
-          });
-        }
+        console.log("Messages saved to chat:", chatRecord.id);
       }
     } catch (error) {
-      console.error(`Message handling error for bot ${botId}:`, error);
-      if (socket) socket.emit("error", "Failed to process message");
+      console.error("Message processing error:", {
+        error: error.message,
+        stack: error.stack,
+        metadata: {
+          botId,
+          sender: msg?.from,
+          message: msg?.body,
+        },
+      });
     }
   });
 
