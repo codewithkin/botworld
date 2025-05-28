@@ -12,7 +12,7 @@ export async function sendMagicLinkEmail({
   url: string;
 }) {
   try {
-    const { data } = await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: "BotWorld 🪄 <no-reply@botworld.pro>",
       to: email,
       subject: "Your Magic Link is Here! ✨",
@@ -32,7 +32,13 @@ export async function sendMagicLinkEmail({
       `,
     });
 
-    console.log(`✅ Magic link sent to ${email}`, data?.id);
+    if(error) {
+      console.log("An error occured while sending email: ", error);
+
+      return;
+    }
+
+    console.log(`✅ Magic link sent to ${email}`, data);
   } catch (err) {
     console.error(`❌ Failed to send magic link to ${email}:`, err);
     throw new Error("Could not send magic link");
