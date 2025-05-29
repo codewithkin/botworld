@@ -1,27 +1,23 @@
-const {Client, LocalAuth} = require("whatsapp-web.js");
-const qrcode = require("qrcode");
-const db = require("./lib/sqlite");
-const {OpenAI} = require("openai");
-const axios = require("axios");
-const {prisma} = require("./lib/prisma.js");
+import {Client, LocalAuth} from "whatsapp-web.js";
+import qrcode from "qrcode";
+import {OpenAI} from "openai";
+import axios from "axios";
+import {prisma} from "../../prisma/prisma";
+import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
 
-require("dotenv").config();
+dotenv.config();
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const activeClients = new Map();
+const activeClients = new Map<string, Client>();
 
-async function initializeExistingBots() {
+export async function initializeExistingBots(): Promise<void> {
   try {
-    // Since we're using SQLite, we need a different approach to find existing sessions
-    // We'll look for session files in the filesystem instead
-    const fs = require("fs");
-    const path = require("path");
     const sessionDir = path.join(__dirname, "./sessions/session");
-
-    console.log("Session directory: ", fs.readdirSync(sessionDir));
 
     if (!fs.existsSync(sessionDir)) {
       return;
@@ -48,9 +44,12 @@ async function initializeExistingBots() {
   }
 }
 
-async function createWhatsAppClient(botId, socket) {
+export async function createWhatsAppClient(
+  botId: string,
+  socket?: any
+): Promise<Client> {
   if (activeClients.has(botId)) {
-    return activeClients.get(botId);
+    return activeClients.get(botId)!;
   }
 
   const client = new Client({
@@ -58,7 +57,7 @@ async function createWhatsAppClient(botId, socket) {
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     },
     authStrategy: new LocalAuth({
-      clientId: botId, // Use botId as clientId for session file naming
+      clientId: botId,
       dataPath: "sessions",
     }),
   });
@@ -95,14 +94,12 @@ async function createWhatsAppClient(botId, socket) {
   client.on("message", async (msg) => {
     try {
       const chat = await msg.getChat();
-      console.log("Received message from:", msg.from, "Content:", msg.body);
 
       if (chat.isReadOnly || chat.isGroup || msg.fromMe || !msg.body) return;
 
       const assistantId = await db.getBotConfig(botId, "assistantId");
       if (!assistantId) return;
 
-      // Get or create chat thread
       const existingChat = await prisma.chat.findFirst({
         where: {
           from: msg.from,
@@ -111,12 +108,10 @@ async function createWhatsAppClient(botId, socket) {
         include: {messages: {orderBy: {createdAt: "asc"}, take: 20}},
       });
 
-      let threadId;
+      let threadId: string;
       if (existingChat) {
         threadId = existingChat.threadId;
-        console.log("Using existing chat thread:", threadId);
       } else {
-        // Create new chat and thread
         const newThread = await openai.beta.threads.create();
         threadId = newThread.id;
 
@@ -129,43 +124,35 @@ async function createWhatsAppClient(botId, socket) {
             bots: {connect: {id: botId}},
           },
         });
-        console.log("Created new chat with thread:", threadId);
       }
 
-      // Add user message to OpenAI thread
       await openai.beta.threads.messages.create(threadId, {
         role: "user",
         content: msg.body,
       });
 
-      // Execute assistant
       const run = await openai.beta.threads.runs.create(threadId, {
         assistant_id: assistantId,
       });
 
-      // Wait for completion
       let runStatus;
       do {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         runStatus = await openai.beta.threads.runs.retrieve(threadId, run.id);
       } while (runStatus.status !== "completed");
 
-      // Get assistant response
       const messages = await openai.beta.threads.messages.list(threadId);
       const assistantMessage = messages.data.find((m) => m.role === "assistant")
         ?.content[0]?.text?.value;
 
       if (assistantMessage) {
-        // Send response
         await msg.reply(assistantMessage);
 
-        // Add assistant response to OpenAI thread
         await openai.beta.threads.messages.create(threadId, {
           role: "assistant",
           content: assistantMessage,
         });
 
-        // Save both messages to database
         const chatRecord = await prisma.chat.findFirstOrThrow({
           where: {threadId},
         });
@@ -185,15 +172,13 @@ async function createWhatsAppClient(botId, socket) {
               botId,
               userId: chatRecord.userId,
               chatId: chatRecord.id,
-              sender: botId, // Using botId as sender for AI messages
+              sender: botId,
               contentSnippet: assistantMessage.slice(0, 300),
               reply: assistantMessage,
               fallback: false,
             },
           ],
         });
-
-        console.log("Messages saved to chat:", chatRecord.id);
       }
     } catch (error) {
       console.error("Message processing error:", {
@@ -213,8 +198,4 @@ async function createWhatsAppClient(botId, socket) {
   return client;
 }
 
-module.exports = {
-  createWhatsAppClient,
-  initializeExistingBots,
-  activeClients,
-};
+export {activeClients};

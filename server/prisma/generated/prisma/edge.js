@@ -222,7 +222,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/codewithkin/Desktop/projects/botworld/prisma/generated/prisma",
+      "value": "/home/codewithkin/Desktop/projects/botworld/server/prisma/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -236,11 +236,12 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/codewithkin/Desktop/projects/botworld/prisma/schema.prisma",
+    "sourceFilePath": "/home/codewithkin/Desktop/projects/botworld/server/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null
+    "rootEnvPath": "../../../.env",
+    "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../..",
   "clientVersion": "6.8.2",
