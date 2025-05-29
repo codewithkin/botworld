@@ -7,13 +7,16 @@ import cors from "cors";
 // Better-auth
 import {toNodeHandler} from "better-auth/node";
 import {auth} from "./lib/auth";
-import { setBotConfig } from "./functions/db/setBotConfig";
+import {setBotConfig} from "./functions/db/setBotConfig";
+import {config} from "dotenv";
 
 const app = express();
 const httpServer = createServer(app);
 
 // Add better-auth endpoints
 app.all("/api/auth/{*any}", toNodeHandler(auth));
+
+config();
 
 // Configure CORS middleware
 app.use(

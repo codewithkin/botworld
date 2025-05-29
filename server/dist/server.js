@@ -20,10 +20,13 @@ const cors_1 = __importDefault(require("cors"));
 // Better-auth
 const node_1 = require("better-auth/node");
 const auth_1 = require("./lib/auth");
+const setBotConfig_1 = require("./functions/db/setBotConfig");
+const dotenv_1 = require("dotenv");
 const app = (0, express_1.default)();
 const httpServer = (0, http_1.createServer)(app);
 // Add better-auth endpoints
 app.all("/api/auth/{*any}", (0, node_1.toNodeHandler)(auth_1.auth));
+(0, dotenv_1.config)();
 // Configure CORS middleware
 app.use((0, cors_1.default)({
     origin: ["http://localhost:3000", "https://app.botworld.pro"],
@@ -71,8 +74,8 @@ io.on("connection", (socket) => {
                 userId: clientUserId,
                 assistantId,
             });
-            // await db.setBotConfig(clientBotId, "userId", clientUserId);
-            // await db.setBotConfig(clientBotId, "assistantId", assistantId);
+            yield (0, setBotConfig_1.setBotConfig)(clientBotId, "userId", clientUserId);
+            yield (0, setBotConfig_1.setBotConfig)(clientBotId, "assistantId", assistantId);
             console.log(`Stored IDs for bot ${clientBotId}`);
             console.log(`User ${clientUserId} authenticated for bot ${clientBotId}`);
         }

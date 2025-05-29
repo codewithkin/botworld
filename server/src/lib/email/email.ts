@@ -1,6 +1,9 @@
-import { Resend } from 'resend';
+import {config} from "dotenv";
+import {Resend} from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+config();
+
+const resend = new Resend("re_123");
 
 type EmailContent = {
   subject: string;
@@ -22,18 +25,18 @@ type SendNotificationEmailParams = {
 export async function sendNotificationEmail({
   to,
   content,
-  from = 'no-reply@botworld.pro'
-}: SendNotificationEmailParams): Promise<{ data?: any; error?: Error }> {
+  from = "no-reply@botworld.pro",
+}: SendNotificationEmailParams): Promise<{data?: any; error?: Error}> {
   try {
     // Validate required fields
     if (!to || !content.subject || !content.html) {
-      throw new Error('Missing required email fields');
+      throw new Error("Missing required email fields");
     }
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(to)) {
-      throw new Error('Invalid recipient email format');
+      throw new Error("Invalid recipient email format");
     }
 
     // Send email using Resend
@@ -42,26 +45,25 @@ export async function sendNotificationEmail({
       to,
       subject: content.subject,
       html: content.html,
-      text: content.text || stripHtml(content.html)
+      text: content.text || stripHtml(content.html),
     });
 
-    return { data };
+    return {data};
   } catch (error) {
-    console.error('Email sending failed:', error);
-    
+    console.error("Email sending failed:", error);
+
     // Return normalized error
-    const emailError = error instanceof Error 
-      ? error 
-      : new Error('Failed to send email');
-    
-    return { error: emailError };
+    const emailError =
+      error instanceof Error ? error : new Error("Failed to send email");
+
+    return {error: emailError};
   }
 }
 
 // Helper function to create text version from HTML
 function stripHtml(html: string): string {
   return html
-    .replace(/<[^>]*>?/gm, '') // Remove HTML tags
-    .replace(/\s+/g, ' ')       // Collapse whitespace
+    .replace(/<[^>]*>?/gm, "") // Remove HTML tags
+    .replace(/\s+/g, " ") // Collapse whitespace
     .trim();
 }

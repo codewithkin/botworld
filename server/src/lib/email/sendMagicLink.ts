@@ -1,4 +1,7 @@
-import { Resend } from "resend";
+import {config} from "dotenv";
+import {Resend} from "resend";
+
+config();
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -12,7 +15,7 @@ export async function sendMagicLinkEmail({
   url: string;
 }) {
   try {
-    const { data, error } = await resend.emails.send({
+    const {data, error} = await resend.emails.send({
       from: "BotWorld 🪄 <no-reply@botworld.pro>",
       to: email,
       subject: "Your Magic Link is Here! ✨",
@@ -32,7 +35,7 @@ export async function sendMagicLinkEmail({
       `,
     });
 
-    if(error) {
+    if (error) {
       console.log("An error occured while sending email: ", error);
 
       return;
