@@ -1,9 +1,10 @@
-import ClientComponent from "./components/ClientComponent";
+import { createFileRoute } from '@tanstack/react-router'
+import ClientComponent from './components/ClientComponent'
 
-export const dynamic = "force-dynamic";
+export const Route = createFileRoute('/auth/')({
+  component: RouteComponent,
+})
 
-function AuthPage() {
-  return <ClientComponent />;
+function RouteComponent() {
+  return (<ClientComponent />)
 }
-
-export default AuthPage;

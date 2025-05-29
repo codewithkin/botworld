@@ -1,4 +1,4 @@
-"use client";
+import { createFileRoute } from '@tanstack/react-router'
 
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -9,6 +9,17 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+
+export const Route = createFileRoute('/auth/components/ClientComponent')({
+  component: RouteComponent,
+})
+
+function RouteComponent() {
+  return (
+    <ClientComponent />
+  )
+}
+
 
 function ClientComponent() {
   const [email, setEmail] = useState("");
