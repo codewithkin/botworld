@@ -17,11 +17,6 @@ const httpServer = createServer(app);
 // Add request logging
 app.use(morgan("combined"));
 
-// Add better-auth endpoints
-app.all("/api/auth/*splat", toNodeHandler(auth));
-
-config();
-
 // Configure CORS middleware
 app.use(
   cors({
@@ -30,6 +25,11 @@ app.use(
     credentials: true,
   })
 );
+
+// Add better-auth endpoints
+app.all("/api/auth/*splat", toNodeHandler(auth));
+
+config();
 
 const io = new IoServer(httpServer, {
   cors: {
