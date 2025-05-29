@@ -2,9 +2,26 @@ import express, {Request, Response} from "express";
 import {createServer} from "http";
 import {Server as IoServer} from "socket.io";
 import {createWhatsAppClient} from "./manager/whatsapp-manager";
+import cors from "cors";
+
+// Better-auth
+import {toNodeHandler} from "better-auth/node";
+import {auth} from "./lib/auth";
 
 const app = express();
 const httpServer = createServer(app);
+
+// Add better-auth endpoints
+app.all("/api/auth/*", toNodeHandler(auth));
+
+// Configure CORS middleware
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://app.botworld.pro"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 const io = new IoServer(httpServer, {
   cors: {
