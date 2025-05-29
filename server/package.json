@@ -4,7 +4,7 @@
   "main": "./dist/server.js",
   "scripts": {
     "start": "node ./dist/server.js",
-    "dev": "npx tsc --build --watch"
+    "dev": "npx tsc --build"
   },
   "keywords": [],
   "author": "",
