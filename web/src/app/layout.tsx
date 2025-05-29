@@ -2,9 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import QueryClientProviderWrapper from "@/providers/QueryClientProviderWrapper";
-import { Toaster } from "sonner";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -61,9 +59,7 @@ export default function RootLayout({
     <html lang="en" className={`${poppins.variable}`}>
       <body className={`${poppins.variable} antialiased`}>
         <QueryClientProviderWrapper>{children}</QueryClientProviderWrapper>
-        <Toaster position="top-center" richColors expand visibleToasts={5} />
-        <Analytics />
-        <SpeedInsights />
+
       </body>
     </html>
   );

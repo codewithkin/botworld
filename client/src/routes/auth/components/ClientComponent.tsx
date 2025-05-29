@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import Image from "next/image";
 import { motion } from "framer-motion";
 
 function ClientComponent() {
@@ -116,11 +115,10 @@ function ClientComponent() {
             </>
           ) : (
             <>
-              <Image
+              <img
                 src="/icons/google.png"
                 alt="Google"
-                width={24}
-                height={24}
+                className="h-6 w-6"
               />
               Sign in with Google
             </>
@@ -132,3 +130,4 @@ function ClientComponent() {
 }
 
 export default ClientComponent;
+

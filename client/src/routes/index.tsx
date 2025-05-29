@@ -1,22 +1,21 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { Loader2 } from "lucide-react";
+import { redirect } from "@tanstack/react-router";
 
 function LandingPage() {
-  const router = useRouter();
   const { data, isPending } = authClient.useSession();
 
   useEffect(() => {
     if (isPending) return;
     if (data) {
-      router.push("/dashboard");
+      // redirect("/dashboard");
     } else {
-      router.push("/auth");
+      // redirect("/auth");
     }
-  }, [data, isPending, router]);
+  }, [data, isPending]);
 
   if (isPending) {
     return (
