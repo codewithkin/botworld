@@ -1,6 +1,6 @@
 import {prisma} from "../../lib/auth";
 
-export default async function getBotConfig(botId: string, property: string) {
+export async function getBotConfig(botId: string, property: string) {
   try {
     // Get the bot using prisma
     const bot: any = await prisma.bot.findUnique({

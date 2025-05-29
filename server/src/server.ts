@@ -7,6 +7,7 @@ import cors from "cors";
 // Better-auth
 import {toNodeHandler} from "better-auth/node";
 import {auth} from "./lib/auth";
+import { setBotConfig } from "./functions/db/setBotConfig";
 
 const app = express();
 const httpServer = createServer(app);
@@ -71,8 +72,8 @@ io.on("connection", (socket) => {
           assistantId,
         });
 
-        // await db.setBotConfig(clientBotId, "userId", clientUserId);
-        // await db.setBotConfig(clientBotId, "assistantId", assistantId);
+        await setBotConfig(clientBotId, "userId", clientUserId);
+        await setBotConfig(clientBotId, "assistantId", assistantId);
 
         console.log(`Stored IDs for bot ${clientBotId}`);
         console.log(
