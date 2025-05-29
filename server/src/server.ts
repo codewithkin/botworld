@@ -71,8 +71,8 @@ io.on("connection", (socket) => {
           assistantId,
         });
 
-        await db.setBotConfig(clientBotId, "userId", clientUserId);
-        await db.setBotConfig(clientBotId, "assistantId", assistantId);
+        // await db.setBotConfig(clientBotId, "userId", clientUserId);
+        // await db.setBotConfig(clientBotId, "assistantId", assistantId);
 
         console.log(`Stored IDs for bot ${clientBotId}`);
         console.log(

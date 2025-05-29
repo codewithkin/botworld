@@ -2,10 +2,9 @@
   "name": "server",
   "version": "1.0.0",
   "main": "./dist/server.js",
-  "type": "module",
   "scripts": {
     "start": "node ./dist/server.js",
-    "dev": "nodemon ./dist/server.js"
+    "dev": "npx tsc --build --watch"
   },
   "keywords": [],
   "author": "",

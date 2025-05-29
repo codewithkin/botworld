@@ -12,14 +12,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// server.ts
 const express_1 = __importDefault(require("express"));
 const http_1 = require("http");
 const socket_io_1 = require("socket.io");
-const whatsapp_manager_1 = require("./whatsapp-manager");
-const sqlite_1 = __importDefault(require("./lib/sqlite"));
+const whatsapp_manager_1 = require("./manager/whatsapp-manager");
+const cors_1 = __importDefault(require("cors"));
+// Better-auth
+const node_1 = require("better-auth/node");
+const auth_1 = require("./lib/auth");
 const app = (0, express_1.default)();
 const httpServer = (0, http_1.createServer)(app);
+// Add better-auth endpoints
+app.all("/api/auth/{*any}", (0, node_1.toNodeHandler)(auth_1.auth));
+// Configure CORS middleware
+app.use((0, cors_1.default)({
+    origin: ["http://localhost:3000", "https://app.botworld.pro"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+}));
 const io = new socket_io_1.Server(httpServer, {
     cors: {
         origin: ["http://localhost:3000", "https://botworld.pro"],
@@ -61,8 +71,8 @@ io.on("connection", (socket) => {
                 userId: clientUserId,
                 assistantId,
             });
-            yield sqlite_1.default.setBotConfig(clientBotId, "userId", clientUserId);
-            yield sqlite_1.default.setBotConfig(clientBotId, "assistantId", assistantId);
+            // await db.setBotConfig(clientBotId, "userId", clientUserId);
+            // await db.setBotConfig(clientBotId, "assistantId", assistantId);
             console.log(`Stored IDs for bot ${clientBotId}`);
             console.log(`User ${clientUserId} authenticated for bot ${clientBotId}`);
         }

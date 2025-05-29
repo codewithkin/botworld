@@ -2,10 +2,11 @@ import {Client, LocalAuth} from "whatsapp-web.js";
 import qrcode from "qrcode";
 import {OpenAI} from "openai";
 import axios from "axios";
-import {prisma} from "../../prisma/prisma";
 import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
+import getBotConfig from "../functions/db/getBotConfig";
+import {prisma} from "../lib/auth";
 
 dotenv.config();
 
@@ -97,7 +98,7 @@ export async function createWhatsAppClient(
 
       if (chat.isReadOnly || chat.isGroup || msg.fromMe || !msg.body) return;
 
-      const assistantId = await db.getBotConfig(botId, "assistantId");
+      const assistantId = await getBotConfig(botId, "assistantId");
       if (!assistantId) return;
 
       const existingChat = await prisma.chat.findFirst({
@@ -120,7 +121,7 @@ export async function createWhatsAppClient(
             name: `Chat with ${msg.from}`,
             from: msg.from,
             threadId: threadId,
-            userId: await db.getBotConfig(botId, "userId"),
+            userId: await getBotConfig(botId, "userId"),
             bots: {connect: {id: botId}},
           },
         });
@@ -141,9 +142,10 @@ export async function createWhatsAppClient(
         runStatus = await openai.beta.threads.runs.retrieve(threadId, run.id);
       } while (runStatus.status !== "completed");
 
-      const messages = await openai.beta.threads.messages.list(threadId);
-      const assistantMessage = messages.data.find((m) => m.role === "assistant")
-        ?.content[0]?.text?.value;
+      const messages: any = await openai.beta.threads.messages.list(threadId);
+      const assistantMessage = messages.data.find(
+        (m: any) => m.role === "assistant"
+      )?.content[0]?.text?.value;
 
       if (assistantMessage) {
         await msg.reply(assistantMessage);
@@ -180,7 +182,7 @@ export async function createWhatsAppClient(
           ],
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Message processing error:", {
         error: error.message,
         stack: error.stack,
