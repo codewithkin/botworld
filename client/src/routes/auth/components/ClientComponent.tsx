@@ -20,7 +20,6 @@ function RouteComponent() {
   )
 }
 
-
 function ClientComponent() {
   const [email, setEmail] = useState("");
   const [emailSent, setEmailSent] = useState(false);

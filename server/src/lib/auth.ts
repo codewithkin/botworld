@@ -1,7 +1,7 @@
-import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
-import { magicLink } from "better-auth/plugins";
-import { sendMagicLinkEmail } from "./email/sendMagicLink";
+import {betterAuth} from "better-auth";
+import {prismaAdapter} from "better-auth/adapters/prisma";
+import {magicLink} from "better-auth/plugins";
+import {sendMagicLinkEmail} from "./email/sendMagicLink";
 import {PrismaClient} from "../../prisma/generated/prisma";
 
 export const prisma = new PrismaClient();
@@ -20,5 +20,11 @@ export const auth = betterAuth({
     magicLink({
       sendMagicLink: sendMagicLinkEmail,
     }),
+  ],
+  trustedOrigins: [
+    "http://localhost:8080",
+    "http://localhost:3000",
+    "https://app.botworld.pro",
+    "https://api.botworld.pro",
   ],
 });

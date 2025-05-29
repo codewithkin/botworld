@@ -11,6 +11,8 @@ import {auth} from "./lib/auth";
 import {setBotConfig} from "./functions/db/setBotConfig";
 import {config} from "dotenv";
 
+config();
+
 const app = express();
 const httpServer = createServer(app);
 
@@ -28,8 +30,6 @@ app.use(
 
 // Add better-auth endpoints
 app.all("/api/auth/*splat", toNodeHandler(auth));
-
-config();
 
 const io = new IoServer(httpServer, {
   cors: {
