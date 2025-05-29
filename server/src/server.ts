@@ -12,7 +12,7 @@ const app = express();
 const httpServer = createServer(app);
 
 // Add better-auth endpoints
-app.all("/api/auth/*", toNodeHandler(auth));
+app.all("/api/auth/{*any}", toNodeHandler(auth));
 
 // Configure CORS middleware
 app.use(
