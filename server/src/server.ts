@@ -3,6 +3,7 @@ import {createServer} from "http";
 import {Server as IoServer} from "socket.io";
 import {createWhatsAppClient} from "./manager/whatsapp-manager";
 import cors from "cors";
+import morgan from "morgan";
 
 // Better-auth
 import {toNodeHandler} from "better-auth/node";
@@ -13,8 +14,11 @@ import {config} from "dotenv";
 const app = express();
 const httpServer = createServer(app);
 
+// Add request logging
+app.use(morgan("combined"));
+
 // Add better-auth endpoints
-app.all("/api/auth/{*any}", toNodeHandler(auth));
+app.all("/api/auth/*splat", toNodeHandler(auth));
 
 config();
 
@@ -29,7 +33,11 @@ app.use(
 
 const io = new IoServer(httpServer, {
   cors: {
-    origin: ["http://localhost:3000", "https://botworld.pro"],
+    origin: [
+      "http://localhost:3000",
+      "https://botworld.pro",
+      "https://app.botworld.pro",
+    ],
     methods: ["GET", "POST"],
     credentials: true,
   },

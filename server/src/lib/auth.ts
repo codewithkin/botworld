@@ -1,6 +1,5 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { nextCookies } from "better-auth/next-js";
 import { magicLink } from "better-auth/plugins";
 import { sendMagicLinkEmail } from "./email/sendMagicLink";
 import {PrismaClient} from "../../prisma/generated/prisma";
