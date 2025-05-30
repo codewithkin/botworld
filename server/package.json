@@ -1,9 +1,9 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "./dist/server.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node ./dist/server.js",
+    "start": "node ./server.js",
     "build": "tsc --build",
     "dev": "nodemon ./src/server.ts"
   },
