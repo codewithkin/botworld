@@ -8,309 +8,309 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router'
 
 // Import Routes
 
-import { Route as rootRoute } from "./routes/__root";
-import { Route as IndexImport } from "./routes/index";
-import { Route as UpgradeIndexImport } from "./routes/upgrade/index";
-import { Route as DashboardIndexImport } from "./routes/dashboard/index";
-import { Route as AuthIndexImport } from "./routes/auth/index";
-import { Route as DemoTanstackQueryImport } from "./routes/demo.tanstack-query";
-import { Route as DemoStoreImport } from "./routes/demo.store";
-import { Route as DashboardlayoutImport } from "./routes/dashboard/__layout";
-import { Route as AuthlayoutImport } from "./routes/auth/__layout";
-import { Route as BotsNewIndexImport } from "./routes/bots/new/index";
-import { Route as AuthComponentsClientComponentImport } from "./routes/auth/components/ClientComponent";
+import { Route as rootRoute } from './routes/__root'
+import { Route as IndexImport } from './routes/index'
+import { Route as UpgradeIndexImport } from './routes/upgrade/index'
+import { Route as DashboardIndexImport } from './routes/dashboard/index'
+import { Route as AuthIndexImport } from './routes/auth/index'
+import { Route as DemoTanstackQueryImport } from './routes/demo.tanstack-query'
+import { Route as DemoStoreImport } from './routes/demo.store'
+import { Route as DashboardlayoutImport } from './routes/dashboard/__layout'
+import { Route as AuthlayoutImport } from './routes/auth/__layout'
+import { Route as BotsNewIndexImport } from './routes/bots/new/index'
+import { Route as AuthComponentsClientComponentImport } from './routes/auth/components/ClientComponent'
 
 // Create Virtual Routes
 
-const DashboardImport = createFileRoute("/dashboard")();
-const AuthImport = createFileRoute("/auth")();
+const DashboardImport = createFileRoute('/dashboard')()
+const AuthImport = createFileRoute('/auth')()
 
 // Create/Update Routes
 
 const DashboardRoute = DashboardImport.update({
-  id: "/dashboard",
-  path: "/dashboard",
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const AuthRoute = AuthImport.update({
-  id: "/auth",
-  path: "/auth",
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const IndexRoute = IndexImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const UpgradeIndexRoute = UpgradeIndexImport.update({
-  id: "/upgrade/",
-  path: "/upgrade/",
+  id: '/upgrade/',
+  path: '/upgrade/',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const DashboardIndexRoute = DashboardIndexImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => DashboardRoute,
-} as any);
+} as any)
 
 const AuthIndexRoute = AuthIndexImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => AuthRoute,
-} as any);
+} as any)
 
 const DemoTanstackQueryRoute = DemoTanstackQueryImport.update({
-  id: "/demo/tanstack-query",
-  path: "/demo/tanstack-query",
+  id: '/demo/tanstack-query',
+  path: '/demo/tanstack-query',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const DemoStoreRoute = DemoStoreImport.update({
-  id: "/demo/store",
-  path: "/demo/store",
+  id: '/demo/store',
+  path: '/demo/store',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const DashboardlayoutRoute = DashboardlayoutImport.update({
-  id: "/__layout",
+  id: '/__layout',
   getParentRoute: () => DashboardRoute,
-} as any);
+} as any)
 
 const AuthlayoutRoute = AuthlayoutImport.update({
-  id: "/__layout",
+  id: '/__layout',
   getParentRoute: () => AuthRoute,
-} as any);
+} as any)
 
 const BotsNewIndexRoute = BotsNewIndexImport.update({
-  id: "/bots/new/",
-  path: "/bots/new/",
+  id: '/bots/new/',
+  path: '/bots/new/',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const AuthComponentsClientComponentRoute =
   AuthComponentsClientComponentImport.update({
-    id: "/components/ClientComponent",
-    path: "/components/ClientComponent",
+    id: '/components/ClientComponent',
+    path: '/components/ClientComponent',
     getParentRoute: () => AuthRoute,
-  } as any);
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/auth": {
-      id: "/auth";
-      path: "/auth";
-      fullPath: "/auth";
-      preLoaderRoute: typeof AuthImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/auth/__layout": {
-      id: "/auth/__layout";
-      path: "/auth";
-      fullPath: "/auth";
-      preLoaderRoute: typeof AuthlayoutImport;
-      parentRoute: typeof AuthRoute;
-    };
-    "/dashboard": {
-      id: "/dashboard";
-      path: "/dashboard";
-      fullPath: "/dashboard";
-      preLoaderRoute: typeof DashboardImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/dashboard/__layout": {
-      id: "/dashboard/__layout";
-      path: "/dashboard";
-      fullPath: "/dashboard";
-      preLoaderRoute: typeof DashboardlayoutImport;
-      parentRoute: typeof DashboardRoute;
-    };
-    "/demo/store": {
-      id: "/demo/store";
-      path: "/demo/store";
-      fullPath: "/demo/store";
-      preLoaderRoute: typeof DemoStoreImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/demo/tanstack-query": {
-      id: "/demo/tanstack-query";
-      path: "/demo/tanstack-query";
-      fullPath: "/demo/tanstack-query";
-      preLoaderRoute: typeof DemoTanstackQueryImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/auth/": {
-      id: "/auth/";
-      path: "/";
-      fullPath: "/auth/";
-      preLoaderRoute: typeof AuthIndexImport;
-      parentRoute: typeof AuthImport;
-    };
-    "/dashboard/": {
-      id: "/dashboard/";
-      path: "/";
-      fullPath: "/dashboard/";
-      preLoaderRoute: typeof DashboardIndexImport;
-      parentRoute: typeof DashboardImport;
-    };
-    "/upgrade/": {
-      id: "/upgrade/";
-      path: "/upgrade";
-      fullPath: "/upgrade";
-      preLoaderRoute: typeof UpgradeIndexImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/auth/components/ClientComponent": {
-      id: "/auth/components/ClientComponent";
-      path: "/components/ClientComponent";
-      fullPath: "/auth/components/ClientComponent";
-      preLoaderRoute: typeof AuthComponentsClientComponentImport;
-      parentRoute: typeof AuthImport;
-    };
-    "/bots/new/": {
-      id: "/bots/new/";
-      path: "/bots/new";
-      fullPath: "/bots/new";
-      preLoaderRoute: typeof BotsNewIndexImport;
-      parentRoute: typeof rootRoute;
-    };
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthImport
+      parentRoute: typeof rootRoute
+    }
+    '/auth/__layout': {
+      id: '/auth/__layout'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthlayoutImport
+      parentRoute: typeof AuthRoute
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardImport
+      parentRoute: typeof rootRoute
+    }
+    '/dashboard/__layout': {
+      id: '/dashboard/__layout'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardlayoutImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/demo/store': {
+      id: '/demo/store'
+      path: '/demo/store'
+      fullPath: '/demo/store'
+      preLoaderRoute: typeof DemoStoreImport
+      parentRoute: typeof rootRoute
+    }
+    '/demo/tanstack-query': {
+      id: '/demo/tanstack-query'
+      path: '/demo/tanstack-query'
+      fullPath: '/demo/tanstack-query'
+      preLoaderRoute: typeof DemoTanstackQueryImport
+      parentRoute: typeof rootRoute
+    }
+    '/auth/': {
+      id: '/auth/'
+      path: '/'
+      fullPath: '/auth/'
+      preLoaderRoute: typeof AuthIndexImport
+      parentRoute: typeof AuthImport
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexImport
+      parentRoute: typeof DashboardImport
+    }
+    '/upgrade/': {
+      id: '/upgrade/'
+      path: '/upgrade'
+      fullPath: '/upgrade'
+      preLoaderRoute: typeof UpgradeIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/auth/components/ClientComponent': {
+      id: '/auth/components/ClientComponent'
+      path: '/components/ClientComponent'
+      fullPath: '/auth/components/ClientComponent'
+      preLoaderRoute: typeof AuthComponentsClientComponentImport
+      parentRoute: typeof AuthImport
+    }
+    '/bots/new/': {
+      id: '/bots/new/'
+      path: '/bots/new'
+      fullPath: '/bots/new'
+      preLoaderRoute: typeof BotsNewIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
 // Create and export the route tree
 
 interface AuthRouteChildren {
-  AuthlayoutRoute: typeof AuthlayoutRoute;
-  AuthIndexRoute: typeof AuthIndexRoute;
-  AuthComponentsClientComponentRoute: typeof AuthComponentsClientComponentRoute;
+  AuthlayoutRoute: typeof AuthlayoutRoute
+  AuthIndexRoute: typeof AuthIndexRoute
+  AuthComponentsClientComponentRoute: typeof AuthComponentsClientComponentRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthlayoutRoute: AuthlayoutRoute,
   AuthIndexRoute: AuthIndexRoute,
   AuthComponentsClientComponentRoute: AuthComponentsClientComponentRoute,
-};
+}
 
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren);
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface DashboardRouteChildren {
-  DashboardlayoutRoute: typeof DashboardlayoutRoute;
-  DashboardIndexRoute: typeof DashboardIndexRoute;
+  DashboardlayoutRoute: typeof DashboardlayoutRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardlayoutRoute: DashboardlayoutRoute,
   DashboardIndexRoute: DashboardIndexRoute,
-};
+}
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
   DashboardRouteChildren,
-);
+)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
-  "/auth": typeof AuthlayoutRoute;
-  "/dashboard": typeof DashboardlayoutRoute;
-  "/demo/store": typeof DemoStoreRoute;
-  "/demo/tanstack-query": typeof DemoTanstackQueryRoute;
-  "/auth/": typeof AuthIndexRoute;
-  "/dashboard/": typeof DashboardIndexRoute;
-  "/upgrade": typeof UpgradeIndexRoute;
-  "/auth/components/ClientComponent": typeof AuthComponentsClientComponentRoute;
-  "/bots/new": typeof BotsNewIndexRoute;
+  '/': typeof IndexRoute
+  '/auth': typeof AuthlayoutRoute
+  '/dashboard': typeof DashboardlayoutRoute
+  '/demo/store': typeof DemoStoreRoute
+  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/auth/': typeof AuthIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/upgrade': typeof UpgradeIndexRoute
+  '/auth/components/ClientComponent': typeof AuthComponentsClientComponentRoute
+  '/bots/new': typeof BotsNewIndexRoute
 }
 
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
-  "/auth": typeof AuthIndexRoute;
-  "/dashboard": typeof DashboardIndexRoute;
-  "/demo/store": typeof DemoStoreRoute;
-  "/demo/tanstack-query": typeof DemoTanstackQueryRoute;
-  "/upgrade": typeof UpgradeIndexRoute;
-  "/auth/components/ClientComponent": typeof AuthComponentsClientComponentRoute;
-  "/bots/new": typeof BotsNewIndexRoute;
+  '/': typeof IndexRoute
+  '/auth': typeof AuthIndexRoute
+  '/dashboard': typeof DashboardIndexRoute
+  '/demo/store': typeof DemoStoreRoute
+  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/upgrade': typeof UpgradeIndexRoute
+  '/auth/components/ClientComponent': typeof AuthComponentsClientComponentRoute
+  '/bots/new': typeof BotsNewIndexRoute
 }
 
 export interface FileRoutesById {
-  __root__: typeof rootRoute;
-  "/": typeof IndexRoute;
-  "/auth": typeof AuthRouteWithChildren;
-  "/auth/__layout": typeof AuthlayoutRoute;
-  "/dashboard": typeof DashboardRouteWithChildren;
-  "/dashboard/__layout": typeof DashboardlayoutRoute;
-  "/demo/store": typeof DemoStoreRoute;
-  "/demo/tanstack-query": typeof DemoTanstackQueryRoute;
-  "/auth/": typeof AuthIndexRoute;
-  "/dashboard/": typeof DashboardIndexRoute;
-  "/upgrade/": typeof UpgradeIndexRoute;
-  "/auth/components/ClientComponent": typeof AuthComponentsClientComponentRoute;
-  "/bots/new/": typeof BotsNewIndexRoute;
+  __root__: typeof rootRoute
+  '/': typeof IndexRoute
+  '/auth': typeof AuthRouteWithChildren
+  '/auth/__layout': typeof AuthlayoutRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard/__layout': typeof DashboardlayoutRoute
+  '/demo/store': typeof DemoStoreRoute
+  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/auth/': typeof AuthIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/upgrade/': typeof UpgradeIndexRoute
+  '/auth/components/ClientComponent': typeof AuthComponentsClientComponentRoute
+  '/bots/new/': typeof BotsNewIndexRoute
 }
 
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | "/"
-    | "/auth"
-    | "/dashboard"
-    | "/demo/store"
-    | "/demo/tanstack-query"
-    | "/auth/"
-    | "/dashboard/"
-    | "/upgrade"
-    | "/auth/components/ClientComponent"
-    | "/bots/new";
-  fileRoutesByTo: FileRoutesByTo;
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/demo/store'
+    | '/demo/tanstack-query'
+    | '/auth/'
+    | '/dashboard/'
+    | '/upgrade'
+    | '/auth/components/ClientComponent'
+    | '/bots/new'
+  fileRoutesByTo: FileRoutesByTo
   to:
-    | "/"
-    | "/auth"
-    | "/dashboard"
-    | "/demo/store"
-    | "/demo/tanstack-query"
-    | "/upgrade"
-    | "/auth/components/ClientComponent"
-    | "/bots/new";
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/demo/store'
+    | '/demo/tanstack-query'
+    | '/upgrade'
+    | '/auth/components/ClientComponent'
+    | '/bots/new'
   id:
-    | "__root__"
-    | "/"
-    | "/auth"
-    | "/auth/__layout"
-    | "/dashboard"
-    | "/dashboard/__layout"
-    | "/demo/store"
-    | "/demo/tanstack-query"
-    | "/auth/"
-    | "/dashboard/"
-    | "/upgrade/"
-    | "/auth/components/ClientComponent"
-    | "/bots/new/";
-  fileRoutesById: FileRoutesById;
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/auth/__layout'
+    | '/dashboard'
+    | '/dashboard/__layout'
+    | '/demo/store'
+    | '/demo/tanstack-query'
+    | '/auth/'
+    | '/dashboard/'
+    | '/upgrade/'
+    | '/auth/components/ClientComponent'
+    | '/bots/new/'
+  fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  AuthRoute: typeof AuthRouteWithChildren;
-  DashboardRoute: typeof DashboardRouteWithChildren;
-  DemoStoreRoute: typeof DemoStoreRoute;
-  DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute;
-  UpgradeIndexRoute: typeof UpgradeIndexRoute;
-  BotsNewIndexRoute: typeof BotsNewIndexRoute;
+  IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRouteWithChildren
+  DashboardRoute: typeof DashboardRouteWithChildren
+  DemoStoreRoute: typeof DemoStoreRoute
+  DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
+  UpgradeIndexRoute: typeof UpgradeIndexRoute
+  BotsNewIndexRoute: typeof BotsNewIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -321,11 +321,11 @@ const rootRouteChildren: RootRouteChildren = {
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   UpgradeIndexRoute: UpgradeIndexRoute,
   BotsNewIndexRoute: BotsNewIndexRoute,
-};
+}
 
 export const routeTree = rootRoute
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()
 
 /* ROUTE_MANIFEST_START
 {
