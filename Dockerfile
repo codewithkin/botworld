@@ -1,7 +1,7 @@
 # -------- Build Stage --------
 FROM node:20-alpine AS builder
 
-WORKDIR /app
+WORKDIR /server
 
 # Copy package files first
 COPY server/package*.json ./
@@ -16,11 +16,11 @@ RUN npm run build
 # -------- Run Stage --------
 FROM node:20-alpine
 
-WORKDIR /app
+WORKDIR /server
 
 # Copy only necessary files
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /server/package*.json ./
+COPY --from=builder /server/dist ./dist
 
 # Install production dependencies
 RUN npm install --omit=dev
