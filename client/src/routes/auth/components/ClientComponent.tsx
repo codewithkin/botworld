@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
 
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -10,16 +10,13 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 
-export const Route = createFileRoute('/auth/components/ClientComponent')({
+export const Route = createFileRoute("/auth/components/ClientComponent")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
-  return (
-    <ClientComponent />
-  )
+  return <ClientComponent />;
 }
-
 
 function ClientComponent() {
   const [email, setEmail] = useState("");
@@ -126,11 +123,7 @@ function ClientComponent() {
             </>
           ) : (
             <>
-              <img
-                src="/icons/google.png"
-                alt="Google"
-                className="h-6 w-6"
-              />
+              <img src="/icons/google.png" alt="Google" className="h-6 w-6" />
               Sign in with Google
             </>
           )}
@@ -141,4 +134,3 @@ function ClientComponent() {
 }
 
 export default ClientComponent;
-

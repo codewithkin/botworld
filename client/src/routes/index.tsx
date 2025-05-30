@@ -1,17 +1,16 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { authClient } from "@/lib/auth-client";
 import { Loader2 } from "lucide-react";
 import { redirect } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute("/")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
-  return (<LandingPage />)
+  return <LandingPage />;
 }
-
 
 function LandingPage() {
   const { data, isPending } = authClient.useSession();
