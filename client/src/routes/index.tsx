@@ -16,12 +16,11 @@ function LandingPage() {
   const { data, isPending } = authClient.useSession();
 
   useEffect(() => {
-    if (isPending) return;
     if (data) {
       redirect({ to: "/dashboard" });
     } else {
       redirect({ to: "/auth" });
-    }
+    } 
   }, [data, isPending]);
 
   if (isPending) {

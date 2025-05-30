@@ -10,6 +10,7 @@ import {toNodeHandler} from "better-auth/node";
 import {auth} from "./lib/auth";
 import {setBotConfig} from "./functions/db/setBotConfig";
 import {config} from "dotenv";
+import { appRouter } from "./routes";
 
 config();
 
@@ -30,6 +31,11 @@ app.use(
 
 // Add better-auth endpoints
 app.all("/api/auth/*splat", toNodeHandler(auth));
+
+app.use(express.json());
+
+// Register endpoints
+app.use("/api", appRouter);
 
 const io = new IoServer(httpServer, {
   cors: {
