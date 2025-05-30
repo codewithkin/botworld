@@ -1,33 +1,35 @@
 # -------- Build Stage --------
 FROM node:20-alpine AS builder
 
-# Set working directory for build
-WORKDIR /server
+WORKDIR /app
 
-# Copy only the server folder into the image
+# Copy package files first
 COPY server/package*.json ./
 RUN npm install
 
+# Copy all source files
 COPY server .
 
-# Build the TypeScript app
+# Build TypeScript to dist/
 RUN npm run build
 
 # -------- Run Stage --------
 FROM node:20-alpine
 
-# Working directory in runtime container
-WORKDIR /server
+WORKDIR /app
 
-# Copy built code and package files from builder
-COPY --from=builder /server/dist ./dist
-COPY --from=builder /server/package*.json ./
+# Copy only necessary files
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/dist ./dist
 
-# Install only production dependencies
+# Install production dependencies
 RUN npm install --omit=dev
 
-# Expose the port your server uses (e.g., 3000)
+# Create non-root user (security best practice)
+RUN adduser -D appuser
+USER appuser
+
 EXPOSE 3000
 
-# Start the app
+# Critical fix: Ensure this matches your actual entry point
 CMD ["node", "dist/server.js"]
