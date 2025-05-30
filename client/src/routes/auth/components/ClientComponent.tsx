@@ -20,6 +20,7 @@ function RouteComponent() {
   )
 }
 
+
 function ClientComponent() {
   const [email, setEmail] = useState("");
   const [emailSent, setEmailSent] = useState(false);
@@ -29,7 +30,7 @@ function ClientComponent() {
     mutationFn: async () => {
       const { error } = await authClient.signIn.magicLink({
         email,
-        callbackURL: "/dashboard",
+        callbackURL: `${import.meta.env.VITE_APP_URL}/dashboard`,
       });
 
       if (error) {
@@ -52,7 +53,7 @@ function ClientComponent() {
     mutationFn: async () => {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/dashboard",
+        callbackURL: `${import.meta.env.VITE_APP_URL}/dashboard`,
       });
     },
     onError: () => {
