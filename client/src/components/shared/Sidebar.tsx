@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Sidebar,
   SidebarContent,
@@ -10,21 +8,19 @@ import {
 } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
 import {
-  BanknoteArrowUp,
+  BanknoteIcon,
   BotMessageSquare,
   ChartLine,
   DoorOpen,
   Settings2,
 } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
-import Link from "next/link";
-import { Separator } from "@radix-ui/react-separator";
-import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
+import { Link, useRouter } from "@tanstack/react-router";
+import { Separator } from "@/components/ui/separator"; // replace radix separator with your own
 
 function AppSideBar() {
-  const { data, isPending } = authClient.useSession();
-
+  const { data } = authClient.useSession();
   const router = useRouter();
 
   const primaryLinks = [
@@ -67,7 +63,7 @@ function AppSideBar() {
     {
       name: "Billing",
       slug: "/billing",
-      icon: <BanknoteArrowUp size={18} />,
+      icon: <BanknoteIcon size={18} />,
     },
   ];
 
@@ -84,7 +80,7 @@ function AppSideBar() {
           {primaryLinks.map((link) => (
             <Link
               key={link.slug}
-              href={link.slug}
+              to={link.slug}
               className="flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-200 hover:border hover:border-primary hover:font-semibold hover:text-primary transition"
             >
               {link.icon}
@@ -99,7 +95,7 @@ function AppSideBar() {
           {secondaryLinks.map((link) => (
             <Link
               key={link.slug}
-              href={link.slug}
+              to={link.slug}
               className="flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-200 hover:border hover:border-primary hover:font-semibold hover:text-primary transition"
             >
               {link.icon}
@@ -115,7 +111,7 @@ function AppSideBar() {
         {footerLinks.map((link) => (
           <Link
             key={link.slug}
-            href={link.slug}
+            to={link.slug}
             className="flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-200 hover:border hover:border-primary hover:font-semibold hover:text-primary transition"
           >
             {link.icon}
@@ -124,13 +120,8 @@ function AppSideBar() {
         ))}
         <Button
           onClick={async () => {
-            await authClient.signOut({
-              fetchOptions: {
-                onSuccess: () => {
-                  router.push("/auth");
-                },
-              },
-            });
+            await authClient.signOut();
+            router.navigate({ to: "/auth" });
           }}
           variant="destructive"
         >

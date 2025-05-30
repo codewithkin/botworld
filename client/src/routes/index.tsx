@@ -19,9 +19,9 @@ function LandingPage() {
   useEffect(() => {
     if (isPending) return;
     if (data) {
-      redirect("/dashboard");
+      redirect({ to: "/dashboard" });
     } else {
-      redirect("/auth");
+      redirect({ to: "/auth" });
     }
   }, [data, isPending]);
 

@@ -14,17 +14,28 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
+import { Route as UpgradeIndexImport } from './routes/upgrade/index'
+import { Route as DashboardIndexImport } from './routes/dashboard/index'
 import { Route as AuthIndexImport } from './routes/auth/index'
 import { Route as DemoTanstackQueryImport } from './routes/demo.tanstack-query'
 import { Route as DemoStoreImport } from './routes/demo.store'
+import { Route as DashboardlayoutImport } from './routes/dashboard/__layout'
 import { Route as AuthlayoutImport } from './routes/auth/__layout'
+import { Route as BotsNewIndexImport } from './routes/bots/new/index'
 import { Route as AuthComponentsClientComponentImport } from './routes/auth/components/ClientComponent'
 
 // Create Virtual Routes
 
+const DashboardImport = createFileRoute('/dashboard')()
 const AuthImport = createFileRoute('/auth')()
 
 // Create/Update Routes
+
+const DashboardRoute = DashboardImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const AuthRoute = AuthImport.update({
   id: '/auth',
@@ -36,6 +47,18 @@ const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const UpgradeIndexRoute = UpgradeIndexImport.update({
+  id: '/upgrade/',
+  path: '/upgrade/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const DashboardIndexRoute = DashboardIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
 } as any)
 
 const AuthIndexRoute = AuthIndexImport.update({
@@ -56,9 +79,20 @@ const DemoStoreRoute = DemoStoreImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const DashboardlayoutRoute = DashboardlayoutImport.update({
+  id: '/__layout',
+  getParentRoute: () => DashboardRoute,
+} as any)
+
 const AuthlayoutRoute = AuthlayoutImport.update({
   id: '/__layout',
   getParentRoute: () => AuthRoute,
+} as any)
+
+const BotsNewIndexRoute = BotsNewIndexImport.update({
+  id: '/bots/new/',
+  path: '/bots/new/',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const AuthComponentsClientComponentRoute =
@@ -93,6 +127,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthlayoutImport
       parentRoute: typeof AuthRoute
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardImport
+      parentRoute: typeof rootRoute
+    }
+    '/dashboard/__layout': {
+      id: '/dashboard/__layout'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardlayoutImport
+      parentRoute: typeof DashboardRoute
+    }
     '/demo/store': {
       id: '/demo/store'
       path: '/demo/store'
@@ -114,12 +162,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthIndexImport
       parentRoute: typeof AuthImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexImport
+      parentRoute: typeof DashboardImport
+    }
+    '/upgrade/': {
+      id: '/upgrade/'
+      path: '/upgrade'
+      fullPath: '/upgrade'
+      preLoaderRoute: typeof UpgradeIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/auth/components/ClientComponent': {
       id: '/auth/components/ClientComponent'
       path: '/components/ClientComponent'
       fullPath: '/auth/components/ClientComponent'
       preLoaderRoute: typeof AuthComponentsClientComponentImport
       parentRoute: typeof AuthImport
+    }
+    '/bots/new/': {
+      id: '/bots/new/'
+      path: '/bots/new'
+      fullPath: '/bots/new'
+      preLoaderRoute: typeof BotsNewIndexImport
+      parentRoute: typeof rootRoute
     }
   }
 }
@@ -140,21 +209,42 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface DashboardRouteChildren {
+  DashboardlayoutRoute: typeof DashboardlayoutRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardlayoutRoute: DashboardlayoutRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthlayoutRoute
+  '/dashboard': typeof DashboardlayoutRoute
   '/demo/store': typeof DemoStoreRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/auth/': typeof AuthIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/upgrade': typeof UpgradeIndexRoute
   '/auth/components/ClientComponent': typeof AuthComponentsClientComponentRoute
+  '/bots/new': typeof BotsNewIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthIndexRoute
+  '/dashboard': typeof DashboardIndexRoute
   '/demo/store': typeof DemoStoreRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/upgrade': typeof UpgradeIndexRoute
   '/auth/components/ClientComponent': typeof AuthComponentsClientComponentRoute
+  '/bots/new': typeof BotsNewIndexRoute
 }
 
 export interface FileRoutesById {
@@ -162,10 +252,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
   '/auth/__layout': typeof AuthlayoutRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard/__layout': typeof DashboardlayoutRoute
   '/demo/store': typeof DemoStoreRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/auth/': typeof AuthIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/upgrade/': typeof UpgradeIndexRoute
   '/auth/components/ClientComponent': typeof AuthComponentsClientComponentRoute
+  '/bots/new/': typeof BotsNewIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -173,41 +268,59 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/dashboard'
     | '/demo/store'
     | '/demo/tanstack-query'
     | '/auth/'
+    | '/dashboard/'
+    | '/upgrade'
     | '/auth/components/ClientComponent'
+    | '/bots/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/dashboard'
     | '/demo/store'
     | '/demo/tanstack-query'
+    | '/upgrade'
     | '/auth/components/ClientComponent'
+    | '/bots/new'
   id:
     | '__root__'
     | '/'
     | '/auth'
     | '/auth/__layout'
+    | '/dashboard'
+    | '/dashboard/__layout'
     | '/demo/store'
     | '/demo/tanstack-query'
     | '/auth/'
+    | '/dashboard/'
+    | '/upgrade/'
     | '/auth/components/ClientComponent'
+    | '/bots/new/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
+  DashboardRoute: typeof DashboardRouteWithChildren
   DemoStoreRoute: typeof DemoStoreRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
+  UpgradeIndexRoute: typeof UpgradeIndexRoute
+  BotsNewIndexRoute: typeof BotsNewIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
+  DashboardRoute: DashboardRouteWithChildren,
   DemoStoreRoute: DemoStoreRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
+  UpgradeIndexRoute: UpgradeIndexRoute,
+  BotsNewIndexRoute: BotsNewIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -222,8 +335,11 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/auth",
+        "/dashboard",
         "/demo/store",
-        "/demo/tanstack-query"
+        "/demo/tanstack-query",
+        "/upgrade/",
+        "/bots/new/"
       ]
     },
     "/": {
@@ -241,6 +357,17 @@ export const routeTree = rootRoute
       "filePath": "auth/__layout.tsx",
       "parent": "/auth"
     },
+    "/dashboard": {
+      "filePath": "dashboard",
+      "children": [
+        "/dashboard/__layout",
+        "/dashboard/"
+      ]
+    },
+    "/dashboard/__layout": {
+      "filePath": "dashboard/__layout.tsx",
+      "parent": "/dashboard"
+    },
     "/demo/store": {
       "filePath": "demo.store.tsx"
     },
@@ -251,9 +378,19 @@ export const routeTree = rootRoute
       "filePath": "auth/index.tsx",
       "parent": "/auth"
     },
+    "/dashboard/": {
+      "filePath": "dashboard/index.tsx",
+      "parent": "/dashboard"
+    },
+    "/upgrade/": {
+      "filePath": "upgrade/index.tsx"
+    },
     "/auth/components/ClientComponent": {
       "filePath": "auth/components/ClientComponent.tsx",
       "parent": "/auth"
+    },
+    "/bots/new/": {
+      "filePath": "bots/new/index.tsx"
     }
   }
 }

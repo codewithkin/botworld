@@ -1,11 +1,9 @@
-"use client";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import Link from "next/link";
 import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Link } from "@tanstack/react-router";
 import { plans } from "@/lib/plans";
 import { DialogTitle } from "@radix-ui/react-dialog";
 
@@ -15,10 +13,10 @@ function NewBotFAB() {
     queryFn: async () => {
       const { data } = await axios.get("/api/user");
       return data;
-    }
+    },
   });
 
-  const router = useRouter();
+  // const navigate = useNavigate();
 
   if (user && user.bots.length >= plans[user.plan as keyof typeof plans].bots) {
     return (
@@ -35,14 +33,11 @@ function NewBotFAB() {
         </DialogTrigger>
         <DialogContent className="max-w-sm rounded-lg border-0 bg-gradient-to-br from-pink-100 to-orange-50 p-8 shadow-xl">
           <div className="flex flex-col items-center space-y-4">
-            {/* Title with warning emoji */}
             <DialogTitle className="text-2xl font-bold text-red-600">
               🚨 Limit Reached!
             </DialogTitle>
 
-            {/* Main content */}
             <div className="flex flex-col items-center space-y-6 text-center">
-              {/* Warning icon */}
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-500 text-white">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -60,12 +55,10 @@ function NewBotFAB() {
                 </svg>
               </div>
 
-              {/* Urgency badge */}
               <div className="animate-pulse rounded-full bg-yellow-400 px-4 py-1 text-sm font-bold text-black">
                 ⏳ 30% OFF for early birds!
               </div>
 
-              {/* Message text */}
               <p className="text-lg text-gray-800">
                 You've reached your limit of{" "}
                 <span className="font-bold text-red-600">
@@ -74,21 +67,18 @@ function NewBotFAB() {
                 on your current plan.
               </p>
 
-              {/* Upgrade CTA */}
               <Link
-                href="/upgrade"
+                to="/upgrade"
                 className="flex w-full items-center justify-center space-x-2 rounded-xl bg-gradient-to-r from-pink-500 to-orange-500 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:shadow-xl"
               >
                 <span>✨ Upgrade Now</span>
               </Link>
 
-              {/* Bonus offer */}
               <div className="text-sm text-gray-600">
                 🎁 <span className="font-semibold">Early bird bonus:</span>
                 Get premium features + 30% discount!
               </div>
 
-              {/* Warning message */}
               <div className="mt-2 text-xs text-red-500">
                 * Offer expires in 3 days
               </div>
@@ -106,7 +96,7 @@ function NewBotFAB() {
         className="rounded-full bg-gradient-to-r from-purple-500 to-orange-500 shadow-lg hover:shadow-xl transition-shadow h-14 w-14 md:h-auto md:w-auto md:px-4 md:py-2"
         size="lg"
       >
-        <Link href="/bots/new">
+        <Link to="/bots/new">
           <Plus />
           <span className="hidden md:inline">New Bot</span>
           <span className="sr-only">Create new bot</span>
@@ -115,6 +105,5 @@ function NewBotFAB() {
     </div>
   );
 }
-
 
 export default NewBotFAB;
