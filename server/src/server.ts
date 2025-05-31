@@ -32,7 +32,7 @@ app.use(
 app.use(express.json());
 
 // Add better-auth endpoints
-app.all("/api/auth/*splat", toNodeHandler(auth));
+app.all('/api/auth/{*any}', toNodeHandler(auth));
 
 
 // Register endpoints
