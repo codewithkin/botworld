@@ -9,6 +9,8 @@ export async function getUserData(req: Request, res: Response) {
         headers: fromNodeHeaders(req.headers),
       });
 
+      console.log("Session data:", session);
+
     const user = session?.user;
 
     if (!user?.id) {

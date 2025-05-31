@@ -27,7 +27,7 @@ function ClientComponent() {
     mutationFn: async () => {
       const { error } = await authClient.signIn.magicLink({
         email,
-        callbackURL: `${import.meta.env.VITE_APP_URL}/dashboard`,
+        callbackURL: `/dashboard`,
       });
 
       if (error) {
@@ -50,7 +50,7 @@ function ClientComponent() {
     mutationFn: async () => {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: `${import.meta.env.VITE_APP_URL}/dashboard`,
+        callbackURL: `/dashboard`,
       });
     },
     onError: () => {

@@ -3,7 +3,7 @@ import { createAuthClient } from "better-auth/react";
 export const authClient = createAuthClient({
   baseURL:
     import.meta.env.MODE === "production"
-      ? "https://api.botworld.pro"
-      : "http://localhost:8080",
+      ? "https://app.botworld.pro"
+      : "http://localhost:3000",
   plugins: [magicLinkClient()],
 });
