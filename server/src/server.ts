@@ -29,11 +29,10 @@ app.use(
   })
 );
 
-app.use(express.json());
-
 // Add better-auth endpoints
 app.all('/api/auth/{*any}', toNodeHandler(auth));
 
+app.use(express.json());
 
 // Register endpoints
 app.use("/api", appRouter);
