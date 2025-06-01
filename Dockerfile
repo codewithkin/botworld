@@ -3,7 +3,7 @@ FROM node:20-alpine AS builder
 
 WORKDIR /server
 COPY server/package*.json .
-RUN npm install
+RUN npm install --force
 COPY server .
 
 # Build will now output to /server instead of /server/dist
@@ -19,7 +19,7 @@ COPY --from=builder /server/server.js .
 COPY --from=builder /server/src/views ./src/views
 COPY --from=builder /server/public ./public
 
-RUN npm install --force
+RUN npm install --omit=dev
 
 EXPOSE 3000
 CMD ["node", "server.js"]  # Simplified path
