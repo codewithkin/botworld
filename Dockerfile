@@ -19,7 +19,7 @@ COPY --from=builder /server/server.js .
 COPY --from=builder /server/src/views ./src/views
 COPY --from=builder /server/public ./public
 
-RUN npm install --omit=dev
+RUN npm install --force
 
 EXPOSE 3000
 CMD ["node", "server.js"]  # Simplified path
