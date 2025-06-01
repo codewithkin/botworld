@@ -10,6 +10,12 @@ pids
 
 /prisma/migrations
 
+/server/*.js
+/server/dist
+/server/controllers
+/server/views
+/server/lib
+
 /server/.wwebjs_auth
 /server/.wwebjs_cache
 /server/sessions

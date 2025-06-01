@@ -23,6 +23,7 @@ const node_1 = require("better-auth/node");
 const auth_1 = require("./lib/auth");
 const setBotConfig_1 = require("./functions/db/setBotConfig");
 const dotenv_1 = require("dotenv");
+const routes_1 = require("./routes");
 (0, dotenv_1.config)();
 const app = (0, express_1.default)();
 const httpServer = (0, http_1.createServer)(app);
@@ -35,7 +36,10 @@ app.use((0, cors_1.default)({
     credentials: true,
 }));
 // Add better-auth endpoints
-app.all("/api/auth/*splat", (0, node_1.toNodeHandler)(auth_1.auth));
+app.all('/api/auth/{*any}', (0, node_1.toNodeHandler)(auth_1.auth));
+app.use(express_1.default.json());
+// Register endpoints
+app.use("/api", routes_1.appRouter);
 const io = new socket_io_1.Server(httpServer, {
     cors: {
         origin: [
