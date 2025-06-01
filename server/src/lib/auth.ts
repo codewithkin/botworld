@@ -27,4 +27,10 @@ export const auth = betterAuth({
     "https://app.botworld.pro",
     "https://api.botworld.pro",
   ],
+  advanced: {
+    defaultCookieAttributes: {
+      sameSite: "none",
+      secure: true,
+    },
+  },
 });
