@@ -20,4 +20,6 @@ COPY --from=builder /server/server.js .
 RUN npm install --omit=dev
 
 EXPOSE 8080
-CMD ["node", "./dist/server.js"]  # Simplified path
+
+# Build the code before running the server
+CMD npm run build && node ./dist/server.js
