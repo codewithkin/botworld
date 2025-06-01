@@ -16,8 +16,6 @@ WORKDIR /server
 # Copy built files directly from root
 COPY --from=builder /server/package*.json .
 COPY --from=builder /server/server.js .
-COPY --from=builder /server/src/views ./src/views
-COPY --from=builder /server/public ./public
 
 RUN npm install --omit=dev
 
