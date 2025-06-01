@@ -1,23 +1,23 @@
 # -------- Build Stage --------
 FROM node:20-alpine AS builder
 
-WORKDIR /app
+WORKDIR /server
 COPY server/package*.json .
 RUN npm install
 COPY server .
 
-# Build will now output to /app instead of /app/dist
+# Build will now output to /server instead of /server/dist
 RUN npm run build
 
 # -------- Run Stage --------
 FROM node:20-alpine
-WORKDIR /app
+WORKDIR /server
 
 # Copy built files directly from root
-COPY --from=builder /app/package*.json .
-COPY --from=builder /app/server.js .
-COPY --from=builder /app/src/views ./src/views
-COPY --from=builder /app/public ./public
+COPY --from=builder /server/package*.json .
+COPY --from=builder /server/server.js .
+COPY --from=builder /server/src/views ./src/views
+COPY --from=builder /server/public ./public
 
 RUN npm install --omit=dev
 
